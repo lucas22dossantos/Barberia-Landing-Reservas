@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+:root {
+  font-family: "PT Serif", serif;
+}
+
+@layer base {
+  body {
+    @apply bg-[#141313] text-white;
+  }
+}
+
+/* Scroll suave en navegadores modernos */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Si tienes un navbar fijo, ajusta el scroll-padding-top para evitar que el contenido quede oculto */
+/* :root { --scroll-offset: 4rem; } */
+/* html { scroll-padding-top: var(--scroll-offset); } */
