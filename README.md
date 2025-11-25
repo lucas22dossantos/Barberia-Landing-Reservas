@@ -1,6 +1,4 @@
-# **README COMPLETO (texto plano, copialo tal cual)**
-
-Barbería Landing con Sistema de Reservas
+# **Barbería Landing con Sistema de Reservas**
 
 Landing page para una barbería desarrollada con React y Vite. Incluye un sistema de reservas, diseño responsive, animaciones y una navegación moderna orientada a la experiencia del usuario.
 
