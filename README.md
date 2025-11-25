@@ -61,24 +61,23 @@ Cuando el servidor está en funcionamiento, se puede navegar por las secciones d
 
 ## Estructura del Proyecto
 
+```
 Barberia-Landing-Reservas/
 │
 ├─ public/
-│ └─ index.html
+│   └─ index.html
 │
 ├─ src/
-│ ├─ components/
-│ │ └─ (componentes reutilizables como Navbar, Footer, Formulario, etc.)
-│ ├─ pages/
-│ │ └─ (vistas principales del sitio)
-│ ├─ styles/
-│ │ └─ (configuración y estilos de Tailwind)
-│ └─ App.jsx
+│   ├─ components/        Componentes reutilizables (Navbar, Footer, Formulario, etc.)
+│   ├─ pages/             Vistas principales del sitio
+│   ├─ styles/            Configuración y estilos de Tailwind
+│   └─ App.jsx
 │
 ├─ .gitignore
 ├─ package.json
 ├─ vite.config.js
 └─ tailwind.config.js
+```
 
 ---
 
