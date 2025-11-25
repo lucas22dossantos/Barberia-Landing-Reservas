@@ -11,10 +11,9 @@ Landing page para una barbería desarrollada con React y Vite. Incluye un sistem
 3. Instalación
 4. Uso
 5. Estructura del Proyecto
-6. Despliegue
-7. Contribuir
-8. Licencia
-9. Contacto
+6. Contribuir
+7. Licencia
+8. Contacto
 
 ---
 
@@ -63,26 +62,23 @@ Cuando el servidor está en funcionamiento, se puede navegar por las secciones d
 ## Estructura del Proyecto
 
 Barberia-Landing-Reservas/
-public/
-index.html
-src/
-components/
-pages/
-styles/
-App.jsx
-.gitignore
-package.json
-vite.config.js
-tailwind.config.js
-
----
-
-## Despliegue
-
-Para generar el build de producción:
-npm run build
-
-Esto creará la carpeta dist/, la cual puede utilizarse para desplegar en Vercel, Netlify o GitHub Pages.
+│
+├─ public/
+│ └─ index.html
+│
+├─ src/
+│ ├─ components/
+│ │ └─ (componentes reutilizables como Navbar, Footer, Formulario, etc.)
+│ ├─ pages/
+│ │ └─ (vistas principales del sitio)
+│ ├─ styles/
+│ │ └─ (configuración y estilos de Tailwind)
+│ └─ App.jsx
+│
+├─ .gitignore
+├─ package.json
+├─ vite.config.js
+└─ tailwind.config.js
 
 ---
 
