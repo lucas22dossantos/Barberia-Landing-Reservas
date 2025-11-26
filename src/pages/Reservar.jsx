@@ -27,26 +27,35 @@ export default function Reservar() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    navigate("/confirmar", {
-      state: {
-        ...form,
+    const serviciosData = {
+      "Corte Signature": {
+        nombre: "Corte Signature",
         precio: 45,
         duracion: "45 minutos",
       },
+      "Corte Clásico": {
+        nombre: "Corte Clásico",
+        precio: 40,
+        duracion: "35 minutos",
+      },
+      "Afeitado Completo": {
+        nombre: "Afeitado Completo",
+        precio: 30,
+        duracion: "25 minutos",
+      },
+      "Barba + Corte": {
+        nombre: "Barba + Corte",
+        precio: 55,
+        duracion: "50 minutos",
+      },
+    };
+
+    navigate("/confirmar", {
+      state: {
+        ...form,
+        servicio: serviciosData[form.servicio],
+      },
     });
-  };
-
-  // animacion
-  const pageVariants = {
-    initial: { x: "100%", opacity: 0 }, // entra desde la derecha
-    in: { x: 0, opacity: 1 }, // posición normal
-    out: { x: "-100%", opacity: 0 }, // sale hacia la izquierda
-  };
-
-  const pageTransition = {
-    type: "tween",
-    ease: "easeInOut",
-    duration: 1,
   };
 
   return (
@@ -55,12 +64,14 @@ export default function Reservar() {
 
       <div className="bg-[#151313] text-white min-h-screen pb-20 pt-10">
         {/* Paso */}
-        <div className="max-w-5xl mx-auto mt-10">
+        <div className="max-w-5xl mx-auto mt-4 px-4">
           <Steps currentStep={1} />
 
           {/* Título */}
-          <h1 className="text-4xl font-bold">Reserva tu próxima cita</h1>
-          <p className="text-gray-400 mt-2">
+          <h1 className="text-3xl md:text-4xl font-bold mt-4">
+            Reserva tu próxima cita
+          </h1>
+          <p className="text-gray-400 mt-2 text-sm md:text-base">
             Elige el servicio, horario y completa tus datos. Te enviaremos la
             confirmación por correo o WhatsApp.
           </p>
@@ -73,24 +84,23 @@ export default function Reservar() {
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.4, ease: "easeInOut" }}
         >
-          <div className="max-w-5xl mx-auto mt-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="max-w-5xl mx-auto mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 px-4">
             {/* FORMULARIO */}
-
             <form
-              className="bg-[#1c1b1a] p-3 rounded-xl md:col-span-2 space-y-3"
+              className="bg-[#1c1b1a] p-4 md:p-6 rounded-xl md:col-span-2 space-y-4"
               onSubmit={handleSubmit}
             >
-              <h2 className="text-base font-semibold mb-1">
+              <h2 className="text-lg font-semibold mb-2">
                 Detalles de la cita
               </h2>
 
               {/* Servicio + Barbero */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs mb-1">Servicio</label>
                   <select
                     name="servicio"
-                    className="w-full p-2 rounded-lg bg-[#262525] text-sm"
+                    className="w-full p-3 rounded-lg bg-[#262525] text-sm"
                     onChange={handleChange}
                   >
                     <option value="">Selecciona</option>
@@ -105,7 +115,7 @@ export default function Reservar() {
                   <label className="block text-xs mb-1">Barbero</label>
                   <select
                     name="barbero"
-                    className="w-full p-2 rounded-lg bg-[#262525] text-sm"
+                    className="w-full p-3 rounded-lg bg-[#262525] text-sm"
                     onChange={handleChange}
                   >
                     <option>Cualquiera</option>
@@ -116,13 +126,13 @@ export default function Reservar() {
               </div>
 
               {/* Fecha + Hora */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs mb-1">Fecha</label>
                   <input
                     type="date"
                     name="fecha"
-                    className="w-full p-2 rounded-lg bg-[#262525] text-sm"
+                    className="w-full p-3 rounded-lg bg-[#262525] text-sm"
                     onChange={handleChange}
                   />
                 </div>
@@ -132,20 +142,20 @@ export default function Reservar() {
                   <input
                     type="time"
                     name="hora"
-                    className="w-full p-2 rounded-lg bg-[#262525] text-sm"
+                    className="w-full p-3 rounded-lg bg-[#262525] text-sm"
                     onChange={handleChange}
                   />
                 </div>
               </div>
 
               {/* Nombre + Teléfono */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs mb-1">Nombre</label>
                   <input
                     type="text"
                     name="nombre"
-                    className="w-full p-2 rounded-lg bg-[#262525] text-sm"
+                    className="w-full p-3 rounded-lg bg-[#262525] text-sm"
                     placeholder="Juan Pérez"
                     onChange={handleChange}
                   />
@@ -156,20 +166,20 @@ export default function Reservar() {
                   <input
                     type="tel"
                     name="telefono"
-                    className="w-full p-2 rounded-lg bg-[#262525] text-sm"
+                    className="w-full p-3 rounded-lg bg-[#262525] text-sm"
                     placeholder="(555) 123-4567"
                     onChange={handleChange}
                   />
                 </div>
               </div>
 
-              {/* Email */}
+              {/* Correo */}
               <div>
                 <label className="block text-xs mb-1">Correo</label>
                 <input
                   type="email"
                   name="email"
-                  className="w-full p-2 rounded-lg bg-[#262525] text-sm"
+                  className="w-full p-3 rounded-lg bg-[#262525] text-sm"
                   placeholder="juan@example.com"
                   onChange={handleChange}
                 />
@@ -181,23 +191,23 @@ export default function Reservar() {
                 <textarea
                   name="notas"
                   rows="2"
-                  className="w-full p-2 rounded-lg bg-[#262525] text-sm"
+                  className="w-full p-3 rounded-lg bg-[#262525] text-sm"
                   placeholder="Notas para el barbero..."
                   onChange={handleChange}
                 ></textarea>
               </div>
 
               {/* Botones */}
-              <div className="flex gap-3 mt-1">
+              <div className="flex gap-3 mt-3">
                 <button
                   type="submit"
-                  className="bg-[#bfa16a] text-[#2f2b27] px-4 py-2 rounded-lg text-sm font-semibold"
+                  className="bg-[#bfa16a] text-[#2f2b27] px-4 py-2 rounded-lg text-sm font-semibold w-full sm:w-auto"
                 >
                   Continuar
                 </button>
                 <a
                   href="/"
-                  className="px-4 py-2 bg-gray-600/30 border border-gray-600 rounded-lg text-sm"
+                  className="px-4 py-2 bg-gray-600/30 border border-gray-600 rounded-lg text-sm w-full sm:w-auto text-center"
                 >
                   Volver
                 </a>
@@ -205,7 +215,7 @@ export default function Reservar() {
             </form>
 
             {/* RESUMEN */}
-            <div className="bg-[#1c1b1a] p-6 rounded-xl h-fit">
+            <div className="bg-[#1c1b1a] p-5 rounded-xl h-fit">
               <h2 className="text-xl font-semibold mb-4">Resumen rápido</h2>
 
               <div className="space-y-3 text-sm">

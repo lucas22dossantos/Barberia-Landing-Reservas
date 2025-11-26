@@ -2,12 +2,12 @@ import React from "react";
 import useReveal from "../hooks/useReveal";
 
 const galeriaData = [
-  { src: "/public/img/galeria-01.webp", alt: "Corte Signature" },
-  { src: "/public/img/galeria-02.webp", alt: "Skin Fade" },
-  { src: "/public/img/galeria-03.webp", alt: "Afeitado Toalla Caliente" },
-  { src: "/public/img/galeria-04.webp", alt: "Perfilado y Barba" },
-  { src: "/public/img/galeria-05.webp", alt: "Corte + Barba" },
-  { src: "/public/img/galeria-06.webp", alt: "Corte Niños" },
+  { src: "/img/galeria-01.webp", alt: "Corte Signature" },
+  { src: "/img/galeria-02.webp", alt: "Skin Fade" },
+  { src: "/img/galeria-03.webp", alt: "Afeitado Toalla Caliente" },
+  { src: "/img/galeria-04.webp", alt: "Perfilado y Barba" },
+  { src: "/img/galeria-05.webp", alt: "Corte + Barba" },
+  { src: "/img/galeria-06.webp", alt: "Corte Niños" },
 ];
 
 export default function Galeria() {
@@ -22,7 +22,10 @@ export default function Galeria() {
         {(() => {
           const [ref, visible] = useReveal({ threshold: 0.12 });
           return (
-            <div ref={ref} className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+            <div
+              ref={ref}
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+            >
               {galeriaData.map((img, index) => (
                 <div
                   key={index}
@@ -34,7 +37,7 @@ export default function Galeria() {
                   <img
                     src={img.src}
                     alt={img.alt}
-                    className="w-full h-50 object-cover transition-transform duration-300 hover:scale-105"
+                    className="w-full h-48 sm:h-52 md:h-56 object-cover transition-transform duration-300 hover:scale-105"
                   />
                 </div>
               ))}

@@ -21,25 +21,11 @@ export default function BookingConfirm() {
 
   if (!data) return null;
 
-  // animacion
-  const pageVariants = {
-    initial: { x: "100%", opacity: 0 }, // entra desde la derecha
-    in: { x: 0, opacity: 1 }, // posición normal
-    out: { x: "-100%", opacity: 0 }, // sale hacia la izquierda
-  };
-
-  const pageTransition = {
-    type: "tween",
-    ease: "easeInOut",
-    duration: 0.5,
-  };
-
   // Modal state
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [modalType, setModalType] = React.useState("success");
 
-  // Función para manejar la confirmación vía WhatsApp
-  const [modalType, setModalType] = React.useState("success"); // success | error
-
+  // Confirmación WhatsApp
   const handleConfirm = () => {
     if (!data.telefono && !data.email) {
       setModalType("error");
@@ -50,16 +36,23 @@ export default function BookingConfirm() {
     setModalType("success");
     setIsModalOpen(true);
 
-    const telefonoBarberia = "54911000000";
-    const mensaje = encodeURIComponent(
-      `Hola! Quiero confirmar mi cita.\n\n` +
-        `• Nombre: ${data.nombre}\n` +
-        `• Servicio: ${data.servicio.nombre}\n` +
-        `• Fecha: ${data.fecha}\n` +
-        `• Hora: ${data.hora}\n` +
-        `• Barbero: ${data.barbero}\n\n` +
-        `¿Cómo puedo realizar el pago para asegurar mi turno?`
-    );
+    const telefonoBarberia = "3765371474";
+    const mensaje = encodeURIComponent(`
+    ¡Hola! Quiero confirmar mi turno.
+
+    🧔‍♂️ *Detalles de la cita*
+    • Nombre: ${data.nombre}
+    • Teléfono: ${data.telefono || "No proporcionado"}
+    • Correo: ${data.email || "No proporcionado"}
+    • Servicio: ${data.servicio.nombre}
+    • Duración: ${data.servicio.duracion}
+    • Precio: $${data.servicio.precio}
+    • Barbero: ${data.barbero}
+    • Fecha: ${data.fecha}
+    • Hora: ${data.hora}
+
+    ¿Puedo recibir instrucciones para realizar el pago y asegurar mi turno?
+    `);
 
     window.open(`https://wa.me/${telefonoBarberia}?text=${mensaje}`);
   };
@@ -70,14 +63,13 @@ export default function BookingConfirm() {
 
       <section className="bg-[#151313] text-white min-h-screen pb-20 pt-10">
         {/* PASOS */}
-        <div className="max-w-5xl mx-auto mt-10">
+        <div className="max-w-5xl mx-auto mt-6 px-4">
           <Steps currentStep={2} />
 
           {/* TÍTULO */}
-          <h1 className="text-3xl font-bold">Confirma tu cita</h1>
-          <p className="text-gray-400 mt-1 text-sm">
-            Revisa que todo esté correcto antes de confirmar. Podrás modificar o
-            cancelar tu reserva más adelante.
+          <h1 className="text-2xl md:text-3xl font-bold">Confirma tu cita</h1>
+          <p className="text-gray-400 mt-1 text-xs md:text-sm leading-tight">
+            Revisa que todo esté correcto antes de confirmar.
           </p>
         </div>
 
@@ -85,24 +77,29 @@ export default function BookingConfirm() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.4, ease: "easeInOut" }}
+          transition={{ duration: 0.4 }}
         >
-          <div className="max-w-5xl mx-auto mt-6 grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div
+            className="
+            max-w-5xl mx-auto mt-4 px-4 
+            grid grid-cols-1 md:grid-cols-3 
+            gap-3
+          "
+          >
             {/* COLUMNA 1 */}
             <div className="md:col-span-2 space-y-3">
-              {/* AVISO VERDE */}
+              {/* AVISO */}
               <div className="bg-green-800/40 border border-green-700 text-green-300 px-3 py-2 rounded-lg text-xs">
                 ✓ Casi listo, solo falta confirmar
               </div>
 
               {/* RESUMEN */}
               <div className="bg-[#1c1b1a] p-3 rounded-xl">
-                <h2 className="text-lg font-semibold mb-2">
+                <h2 className="text-base md:text-lg font-semibold mb-2">
                   Resumen de tu visita
                 </h2>
 
-                <div className="space-y-1 text-gray-300 text-xs mb-3">
+                <div className="space-y-1 text-gray-300 text-xs mb-3 leading-tight">
                   <p>
                     • {data.nombre} para un {data.servicio.nombre}.
                   </p>
@@ -110,10 +107,7 @@ export default function BookingConfirm() {
                     • El {data.fecha} a las {data.hora}.
                   </p>
                   <p>• Barbero: {data.barbero}.</p>
-                  <p>
-                    • Te avisaremos por WhatsApp y correo cuando la cita quede
-                    confirmada.
-                  </p>
+                  <p>• Te avisaremos por WhatsApp y correo.</p>
                 </div>
 
                 {/* NOTAS */}
@@ -121,91 +115,66 @@ export default function BookingConfirm() {
                   <h3 className="text-sm font-semibold mb-1">
                     Notas para tu barbero
                   </h3>
-                  <div className="bg-[#262525] border border-[#3a3a39] rounded-lg p-2 text-xs text-gray-300">
+                  <div className="bg-[#262525] border border-[#3a3a39] rounded-lg p-2 text-xs text-gray-300 leading-tight">
                     {data.notas || "Sin notas adicionales."}
                   </div>
                 </div>
 
                 {/* BOTONES */}
-                <div className="flex gap-3 mt-3">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-3">
                   <button
                     onClick={handleConfirm}
-                    className="bg-[#bfa16a] text-[#2f2b27] px-4 py-2.5 rounded-lg font-semibold hover:bg-[#d8b779] transition text-sm"
+                    className="bg-[#bfa16a] text-[#2f2b27] px-4 py-2.5 rounded-lg font-semibold hover:bg-[#d8b779] transition text-sm w-full sm:w-auto"
                   >
                     Confirmar cita
                   </button>
 
                   <button
                     onClick={() => navigate("/reservar", { state: data })}
-                    className="px-4 py-2.5 bg-gray-600/30 border border-gray-600 rounded-lg hover:bg-[#2a2927] transition text-sm"
+                    className="px-4 py-2.5 bg-gray-600/30 border border-gray-600 rounded-lg hover:bg-[#2a2927] transition text-sm w-full sm:w-auto"
                   >
                     Editar detalles
                   </button>
                 </div>
 
                 <p className="text-xs text-gray-500 mt-2">
-                  Al confirmar aceptas nuestras políticas de puntualidad y
-                  cancelación.
+                  Al confirmar aceptas nuestras políticas.
                 </p>
 
-                <div className="mt-2 flex gap-2 text-xs underline text-gray-400 cursor-pointer">
-                  <span onClick={() => navigate("/")}>Volver al inicio</span>
-                  <span onClick={() => navigate("/Politicas")}>
-                    Ver políticas de cancelación
-                  </span>
+                <div className="mt-2 flex gap-3 text-xs underline text-gray-400 cursor-pointer">
+                  <span onClick={() => navigate("/")}>Inicio</span>
+                  <span onClick={() => navigate("/Politicas")}>Políticas</span>
                 </div>
               </div>
             </div>
 
             {/* COLUMNA 2 — DETALLES */}
-            <div className="bg-[#1c1b1a] p-3 rounded-xl h-fit text-xs">
+            <div className="bg-[#1c1b1a] p-3 rounded-xl h-fit text-xs space-y-2">
               <h2 className="text-sm font-semibold mb-2">Detalles finales</h2>
+
               <p className="text-gray-400 text-xs mb-2">
                 Esto es lo que verás en tu correo y WhatsApp.
               </p>
 
               <div className="space-y-2 text-xs">
-                <div className="flex justify-between border-b border-gray-600/30 pb-1">
-                  <span>Cliente</span>
-                  <strong>{data.nombre}</strong>
-                </div>
-
-                <div className="flex justify-between border-b border-gray-600/30 pb-1">
-                  <span>Servicio</span>
-                  <strong>{data.servicio.nombre}</strong>
-                </div>
-
-                <div className="flex justify-between border-b border-gray-600/30 pb-1">
-                  <span>Barbero</span>
-                  <strong>{data.barbero}</strong>
-                </div>
-
-                <div className="flex justify-between border-b border-gray-600/30 pb-1">
-                  <span>Fecha</span>
-                  <strong>
-                    {data.fecha} · {data.hora}
-                  </strong>
-                </div>
-
-                <div className="flex justify-between border-b border-gray-600/30 pb-1">
-                  <span>Duración estimada</span>
-                  <strong>{data.servicio.duracion}</strong>
-                </div>
-
-                <div className="flex justify-between border-b border-gray-600/30 pb-1">
-                  <span>Precio</span>
-                  <strong>${data.servicio.precio}</strong>
-                </div>
-
-                <div className="flex justify-between border-b border-gray-600/30 pb-1">
-                  <span>Confirmación por</span>
-                  <strong>WhatsApp y correo</strong>
-                </div>
-
-                <div className="flex justify-between border-b border-gray-600/30 pb-1">
-                  <span>Dirección</span>
-                  <strong>Av. Principal 123, Ciudad</strong>
-                </div>
+                {[
+                  ["Cliente", data.nombre],
+                  ["Servicio", data.servicio.nombre],
+                  ["Barbero", data.barbero],
+                  ["Fecha", `${data.fecha} · ${data.hora}`],
+                  ["Duración", data.servicio.duracion],
+                  ["Precio", `$${data.servicio.precio}`],
+                  ["Confirmación por", "WhatsApp y correo"],
+                  ["Dirección", "Av. Principal 123, Ciudad"],
+                ].map(([label, value], i) => (
+                  <div
+                    key={i}
+                    className="flex justify-between border-b border-gray-600/30 pb-1"
+                  >
+                    <span>{label}</span>
+                    <strong>{value}</strong>
+                  </div>
+                ))}
 
                 <div className="mt-2 bg-[#262525] p-2 rounded-lg text-gray-300 flex items-center gap-1 text-xs">
                   🔔 Cancelación gratuita hasta 3 horas antes
@@ -214,7 +183,8 @@ export default function BookingConfirm() {
             </div>
           </div>
         </motion.div>
-        {/* Modal */}
+
+        {/* MODAL */}
         <Modal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}

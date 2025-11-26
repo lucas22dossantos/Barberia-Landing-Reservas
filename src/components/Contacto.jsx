@@ -2,12 +2,14 @@ import React from "react";
 
 export default function Contacto() {
   return (
-    <section className="py-20 bg-[#2f2b27]" id="contacto">
-      <div className="max-w-6xl mx-auto px-6">
+    <section className="py-12 md:py-20 bg-[#2f2b27]" id="contacto">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Encabezado */}
-        <div className="mb-12">
-          <h1 className="text-4xl font-bold text-white mb-3">Contáctanos</h1>
-          <p className="text-white/70 max-w-2xl">
+        <div className="mb-10 md:mb-12 text-center md:text-left">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
+            Contáctanos
+          </h1>
+          <p className="text-white/70 max-w-2xl mx-auto md:mx-0">
             Envíanos un mensaje y responderemos tus consultas a la brevedad.
           </p>
         </div>
@@ -29,7 +31,8 @@ export default function Contacto() {
                   type="text"
                   id="nombre"
                   placeholder="Tu nombre completo"
-                  className="w-full bg-[#2f2b27] text-white px-4 py-3 rounded-lg border border-white/10 focus:border-[#bfa16a] focus:outline-none focus:ring-2 focus:ring-[#bfa16a] transition"
+                  className="w-full bg-[#2f2b27] text-white px-4 py-3 rounded-lg border border-white/10 focus:border-[#bfa16a] focus:outline-none focus:ring-2 focus:ring-[#bfa16a]/30 transition"
+                  aria-required="true"
                 />
               </div>
 
@@ -45,7 +48,8 @@ export default function Contacto() {
                   type="email"
                   id="correo"
                   placeholder="tu@email.com"
-                  className="w-full bg-[#2f2b27] text-white px-4 py-3 rounded-lg border border-white/10 focus:border-[#bfa16a] focus:outline-none focus:ring-2 focus:ring-[#bfa16a] transition"
+                  className="w-full bg-[#2f2b27] text-white px-4 py-3 rounded-lg border border-white/10 focus:border-[#bfa16a] focus:outline-none focus:ring-2 focus:ring-[#bfa16a]/30 transition"
+                  aria-required="true"
                 />
               </div>
 
@@ -61,7 +65,7 @@ export default function Contacto() {
                   type="tel"
                   id="telefono"
                   placeholder="(+54) 3765 000000"
-                  className="w-full bg-[#2f2b27] text-white px-4 py-3 rounded-lg border border-white/10 focus:border-[#bfa16a] focus:outline-none focus:ring-2 focus:ring-[#bfa16a] transition"
+                  className="w-full bg-[#2f2b27] text-white px-4 py-3 rounded-lg border border-white/10 focus:border-[#bfa16a] focus:outline-none focus:ring-2 focus:ring-[#bfa16a]/30 transition"
                 />
               </div>
 
@@ -77,11 +81,15 @@ export default function Contacto() {
                   id="mensaje"
                   rows="4"
                   placeholder="Cuéntanos más detalles..."
-                  className="w-full bg-[#2f2b27] text-white px-4 py-3 rounded-lg border border-white/10 focus:border-[#bfa16a] focus:outline-none focus:ring-2 focus:ring-[#bfa16a] transition resize-none"
+                  className="w-full bg-[#2f2b27] text-white px-4 py-3 rounded-lg border border-white/10 focus:border-[#bfa16a] focus:outline-none focus:ring-2 focus:ring-[#bfa16a]/30 transition resize-none"
+                  aria-required="true"
                 ></textarea>
               </div>
 
-              <button className="text-[#2f2b27] bg-[#bfa16a] px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[#a78d5f] transition hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#bfa16a]">
+              <button
+                type="submit"
+                className="w-full sm:w-auto text-[#2f2b27] bg-[#bfa16a] px-6 py-3 rounded-lg text-sm font-semibold hover:bg-[#a78d5f] transition hover:scale-[1.02] active:scale-100 focus:outline-none focus:ring-2 focus:ring-[#bfa16a]/50"
+              >
                 Enviar
               </button>
             </form>
@@ -89,23 +97,21 @@ export default function Contacto() {
 
           {/* Información de contacto */}
           <div className="space-y-6">
-            {/* Mapa: iframe responsive */}
-
-            {/* Datos de contacto */}
-            <div className="bg-[#141313] rounded-lg space-y-5">
-              <div className="bg-[#141313] rounded-lg overflow-hidden">
+            <div className="bg-[#141313] rounded-lg overflow-hidden">
+              <div className="aspect-w-16 aspect-h-9">
                 <iframe
                   title="Mapa - BlackGold Barbers"
                   src="https://www.google.com/maps?q=Av.+Kingsway+123&output=embed"
-                  className="w-full h-64 border-0"
+                  className="w-full h-60 md:h-64 border-0"
                   loading="lazy"
-                  aria-label="Mapa de la ubicación"
+                  aria-label="Mapa de la ubicación de BlackGold Barbers"
                 ></iframe>
               </div>
+
               <div className="p-6 space-y-5">
-                <div className="flex gap-4 items-start">
+                <div className="flex gap-4">
                   <svg
-                    className="w-6 h-6 text-white/90 mt-1"
+                    className="w-6 h-6 text-white/90 mt-1 flex-shrink-0"
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -120,16 +126,12 @@ export default function Contacto() {
                     />
                     <circle cx="12" cy="9" r="2.2" fill="currentColor" />
                   </svg>
-                  <div>
-                    <p className="text-white/70">
-                      Av. Kingsway 123, Oficina 2B
-                    </p>
-                  </div>
+                  <p className="text-white/70">Av. Kingsway 123, Oficina 2B</p>
                 </div>
 
-                <div className="flex gap-4 items-start">
+                <div className="flex gap-4">
                   <svg
-                    className="w-6 h-6 text-white/90 mt-1 "
+                    className="w-6 h-6 text-white/90 mt-1 flex-shrink-0"
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -143,19 +145,17 @@ export default function Contacto() {
                       strokeLinejoin="round"
                     />
                   </svg>
-                  <div>
-                    <a
-                      href="tel:+543765000000"
-                      className="text-white/70 hover:underline"
-                    >
-                      (54+) 3765 000000
-                    </a>
-                  </div>
+                  <a
+                    href="tel:+543765000000"
+                    className="text-white/70 hover:underline"
+                  >
+                    (+54) 3765 000000
+                  </a>
                 </div>
 
-                <div className="flex gap-4 items-start">
+                <div className="flex gap-4">
                   <svg
-                    className="w-6 h-6 text-white/90 mt-1 "
+                    className="w-6 h-6 text-white/90 mt-1 flex-shrink-0"
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -177,19 +177,17 @@ export default function Contacto() {
                       strokeLinejoin="round"
                     />
                   </svg>
-                  <div>
-                    <a
-                      href="mailto:hola@blackgoldbarbers.com"
-                      className="text-white/70 hover:underline"
-                    >
-                      hola@blackgoldbarbers.com
-                    </a>
-                  </div>
+                  <a
+                    href="mailto:hola@blackgoldbarbers.com"
+                    className="text-white/70 hover:underline"
+                  >
+                    hola@blackgoldbarbers.com
+                  </a>
                 </div>
 
-                <div className="flex gap-4 items-start">
+                <div className="flex gap-4">
                   <svg
-                    className="w-6 h-6 text-white/90 mt-1 "
+                    className="w-6 h-6 text-white/90 mt-1 flex-shrink-0"
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -217,13 +215,13 @@ export default function Contacto() {
                 </div>
 
                 {/* Redes sociales */}
-                <div className="flex gap-4 pt-4">
+                <div className="flex flex-wrap gap-3 pt-4">
                   <a
                     href="https://instagram.com"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Instagram"
-                    className="flex items-center gap-2 bg-[#2f2b27] hover:bg-[#bfa16a] text-white hover:text-[#2f2b27] p-3 rounded-lg transition duration-300"
+                    className="flex items-center gap-2 bg-[#2f2b27] hover:bg-[#bfa16a] text-white hover:text-[#2f2b27] px-4 py-2.5 rounded-lg transition duration-300"
                   >
                     <svg
                       className="w-5 h-5"
@@ -256,7 +254,7 @@ export default function Contacto() {
                         strokeLinejoin="round"
                       />
                     </svg>
-                    <span>Instagram</span>
+                    <span className="text-sm">Instagram</span>
                   </a>
 
                   <a
@@ -264,7 +262,7 @@ export default function Contacto() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Facebook"
-                    className="flex items-center gap-2 bg-[#2f2b27] hover:bg-[#bfa16a] text-white hover:text-[#2f2b27] p-3 rounded-lg transition duration-300"
+                    className="flex items-center gap-2 bg-[#2f2b27] hover:bg-[#bfa16a] text-white hover:text-[#2f2b27] px-4 py-2.5 rounded-lg transition duration-300"
                   >
                     <svg
                       className="w-5 h-5"
@@ -281,7 +279,7 @@ export default function Contacto() {
                         strokeLinejoin="round"
                       />
                     </svg>
-                    <span>Facebook</span>
+                    <span className="text-sm">Facebook</span>
                   </a>
                 </div>
               </div>
