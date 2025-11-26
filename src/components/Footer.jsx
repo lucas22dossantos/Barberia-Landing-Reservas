@@ -1,6 +1,16 @@
 import React from "react";
+import { Link, useLocation } from "react-router-dom";
 
 export default function Footer() {
+  const location = useLocation();
+  const sections = [
+    { id: "inicio", label: "Inicio" },
+    { id: "servicios", label: "Servicios" },
+    { id: "galeria", label: "Galería" },
+    { id: "nosotros", label: "Nosotros" },
+    { id: "contacto", label: "Contacto" },
+  ];
+
   return (
     <footer className="bg-[#151313] text-white">
       <nav className="flex flex-col md:flex-row justify-between items-center gap-4 px-6 py-6 max-w-6xl mx-auto">
@@ -12,46 +22,26 @@ export default function Footer() {
         {/* MENÚ */}
         <div>
           <ul className="flex flex-col md:flex-row items-center gap-3 md:gap-6 text-base">
-            <li>
-              <a
-                href="#inicio"
-                className="hover:text-yellow-400 cursor-pointer transition text-sm"
-              >
-                Inicio
-              </a>
-            </li>
-            <li>
-              <a
-                href="#servicios"
-                className="hover:text-yellow-400 cursor-pointer transition text-sm"
-              >
-                Servicios
-              </a>
-            </li>
-            <li>
-              <a
-                href="#galeria"
-                className="hover:text-yellow-400 cursor-pointer transition text-sm"
-              >
-                Galería
-              </a>
-            </li>
-            <li>
-              <a
-                href="#nosotros"
-                className="hover:text-yellow-400 cursor-pointer transition text-sm"
-              >
-                Nosotros
-              </a>
-            </li>
-            <li>
-              <a
-                href="#contacto"
-                className="hover:text-yellow-400 cursor-pointer transition text-sm"
-              >
-                Contacto
-              </a>
-            </li>
+            {sections.map((section) => (
+              <li key={section.id}>
+                {location.pathname === "/" ? (
+                  <a
+                    href={`#${section.id}`}
+                    className="hover:text-yellow-400 cursor-pointer transition text-sm"
+                  >
+                    {section.label}
+                  </a>
+                ) : (
+                  <Link
+                    to="/"
+                    state={{ scrollTo: section.id }}
+                    className="hover:text-yellow-400 cursor-pointer transition text-sm"
+                  >
+                    {section.label}
+                  </Link>
+                )}
+              </li>
+            ))}
           </ul>
         </div>
 

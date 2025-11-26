@@ -36,7 +36,7 @@ export default function BookingConfirm() {
     setModalType("success");
     setIsModalOpen(true);
 
-    const telefonoBarberia = "3765371474";
+    const telefonoBarberia = "3765000000";
     const mensaje = encodeURIComponent(`
     ¡Hola! Quiero confirmar mi turno.
 
