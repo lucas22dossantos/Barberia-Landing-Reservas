@@ -66,6 +66,7 @@ export default function Servicios() {
 
                     <Link
                       to="/reservar"
+                      state={{ servicio: servicio }}
                       className="bg-[#bfa16a] text-[#2f2b27] px-6 py-3 rounded-lg font-semibold hover:bg-[#a78d5f] transition mt-auto hover:scale-105 active:scale-95 text-center"
                     >
                       Reservar

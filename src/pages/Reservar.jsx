@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useLocation } from "react-router-dom";
 
 // Supabase
 import { supabase } from "../lib/supabaseClient";
@@ -11,6 +12,9 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 export default function Reservar() {
+  const location = useLocation();
+  const { servicio } = location.state || {}; // recibimos el servicio pasado
+
   const [servicios, setServicios] = useState([]);
   const [barberos, setBarberos] = useState([]);
 
@@ -26,15 +30,25 @@ export default function Reservar() {
   });
 
   const servicioActual = servicios.find((s) => s.id === form.servicio);
-  const barberoActual = barberos.find((b) => b.id === form.barbero);
+  const barberoActual = barberos.find((b) => b.id === form.barbero) || null;
 
   const navigate = useNavigate();
 
-  // 🔥 Cargar servicios y barberos al iniciar
+  // Cargar servicios y barberos al iniciar
   useEffect(() => {
     fetchServicios();
     fetchBarberos();
   }, []);
+
+  // Pre-cargar servicio elegido
+  useEffect(() => {
+    if (servicio) {
+      setForm((prev) => ({
+        ...prev,
+        servicio: servicio.id, // ponemos el id en el select
+      }));
+    }
+  }, [servicio]);
 
   const fetchServicios = async () => {
     const { data, error } = await supabase
@@ -63,12 +77,16 @@ export default function Reservar() {
     e.preventDefault();
 
     const servicioSeleccionado = servicios.find((s) => s.id === form.servicio);
+    const barberoSeleccionado =
+      form.barbero === ""
+        ? { id: null, nombre: "Cualquiera" }
+        : barberos.find((b) => b.id === form.barbero);
 
     navigate("/confirmar", {
       state: {
         ...form,
+        barbero: barberoSeleccionado,
         servicio: servicioSeleccionado,
-        barbero: barberoActual,
       },
     });
   };
@@ -115,6 +133,7 @@ export default function Reservar() {
                   <label className="block text-xs mb-1">Servicio</label>
                   <select
                     name="servicio"
+                    value={form.servicio}
                     className="w-full p-3 rounded-lg bg-[#262525] text-sm"
                     onChange={handleChange}
                   >
