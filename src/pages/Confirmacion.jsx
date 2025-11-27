@@ -2,6 +2,9 @@ import { motion } from "framer-motion";
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+// Supabase
+import { supabase } from "../lib/supabaseClient";
+
 //components
 import Modal from "../components/Modal";
 import Steps from "../components/Steps";
@@ -25,36 +28,72 @@ export default function BookingConfirm() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [modalType, setModalType] = React.useState("success");
 
-  // Confirmación WhatsApp
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
+    // validación mínima
     if (!data.telefono && !data.email) {
       setModalType("error");
       setIsModalOpen(true);
       return;
     }
 
-    setModalType("success");
-    setIsModalOpen(true);
+    // Preparar valores (compatibilizar nombres)
+    const barberoId = data.barbero?.id ?? null;
+    const servicioId = data.servicio?.id ?? null;
+    const correo = data.email ?? null;
 
-    const telefonoBarberia = "3765000000";
-    const mensaje = encodeURIComponent(`
-    ¡Hola! Quiero confirmar mi turno.
+    try {
+      // Insertar en la tabla 'reservas' (la que tenés creada)
+      const { error } = await supabase.from("reservas").insert([
+        {
+          nombre: data.nombre,
+          telefono: data.telefono || null,
+          correo: correo,
+          servicio_id: servicioId,
+          barbero_id: barberoId,
+          fecha: data.fecha,
+          hora: data.hora,
+          notas: data.notas || null,
+          estado: "pendiente",
+          /* created_at se rellena con default now() en la BD */
+        },
+      ]);
 
-    🧔‍♂️ *Detalles de la cita*
-    • Nombre: ${data.nombre}
-    • Teléfono: ${data.telefono || "No proporcionado"}
-    • Correo: ${data.email || "No proporcionado"}
-    • Servicio: ${data.servicio.nombre}
-    • Duración: ${data.servicio.duracion}
-    • Precio: $${data.servicio.precio}
-    • Barbero: ${data.barbero}
-    • Fecha: ${data.fecha}
-    • Hora: ${data.hora}
+      if (error) {
+        console.error("Supabase insert error:", error);
+        setModalType("error");
+        setIsModalOpen(true);
+        return;
+      }
 
-    ¿Puedo recibir instrucciones para realizar el pago y asegurar mi turno?
-    `);
+      // Éxito
+      setModalType("success");
+      setIsModalOpen(true);
 
-    window.open(`https://wa.me/${telefonoBarberia}?text=${mensaje}`);
+      // Abrir WhatsApp (usar data.email, no data.correo)
+      const telefonoBarberia = "3764000000"; // Reemplazar con el número real
+      const mensaje = encodeURIComponent(`
+      ¡Hola! Quiero confirmar mi turno.
+
+      🧔‍♂️ *Detalles de la cita*
+      • Nombre: ${data.nombre}
+      • Teléfono: ${data.telefono || "No proporcionado"}
+      • Correo: ${data.email || "No proporcionado"}
+      • Servicio: ${data.servicio?.nombre || "—"}
+      • Duración: ${data.servicio?.duracion || "—"}
+      • Precio: $${data.servicio?.precio ?? "—"}
+      • Barbero: ${data.barbero?.nombre || "Cualquiera"}
+      • Fecha: ${data.fecha}
+      • Hora: ${data.hora}
+
+      ¿Puedo recibir instrucciones para realizar el pago y asegurar mi turno?
+      `);
+
+      window.open(`https://wa.me/${telefonoBarberia}?text=${mensaje}`);
+    } catch (err) {
+      console.error("Insert exception:", err);
+      setModalType("error");
+      setIsModalOpen(true);
+    }
   };
 
   return (
@@ -106,7 +145,7 @@ export default function BookingConfirm() {
                   <p>
                     • El {data.fecha} a las {data.hora}.
                   </p>
-                  <p>• Barbero: {data.barbero}.</p>
+                  <p>• Barbero: {data.barbero.nombre}.</p>
                   <p>• Te avisaremos por WhatsApp y correo.</p>
                 </div>
 
@@ -159,8 +198,10 @@ export default function BookingConfirm() {
               <div className="space-y-2 text-xs">
                 {[
                   ["Cliente", data.nombre],
+                  ["Telefono", data.telefono],
+                  ["Correo", data.email],
                   ["Servicio", data.servicio.nombre],
-                  ["Barbero", data.barbero],
+                  ["Barbero", data.barbero.nombre],
                   ["Fecha", `${data.fecha} · ${data.hora}`],
                   ["Duración", data.servicio.duracion],
                   ["Precio", `$${data.servicio.precio}`],
@@ -185,7 +226,7 @@ export default function BookingConfirm() {
         </motion.div>
 
         {/* MODAL */}
-        <Modal
+        {/* <Modal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           title={modalType === "success" ? "Cita confirmada" : "Error"}
@@ -204,7 +245,7 @@ export default function BookingConfirm() {
               Por favor ingresa tu teléfono o correo electrónico.
             </p>
           )}
-        </Modal>
+        </Modal> */}
       </section>
 
       <Footer />

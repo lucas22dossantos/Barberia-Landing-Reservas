@@ -1,24 +1,59 @@
-# Logs
-logs
-*.log
+# ───────────────────────────────────────────
+#  ARCHIVOS Y CARPETAS DE VITE / NODE
+# ───────────────────────────────────────────
+node_modules/
+dist/
+.DS_Store
+*.local
+
+
+# ───────────────────────────────────────────
+#  VARIABLES DE ENTORNO
+# ───────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ───────────────────────────────────────────
+#  SUPABASE
+# ───────────────────────────────────────────
+supabase/.temp/
+supabase/.branches/
+supabase/migrations/*.lock
+supabase/.env
+supabase/.env.*
+supabase/functions/**/build/
+supabase/functions/**/node_modules/
+
+# No subir claves privadas si usás Supabase CLI
+supabase/config.toml
+
+# ───────────────────────────────────────────
+#  LOGS Y ARCHIVOS TEMPORALES
+# ───────────────────────────────────────────
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-lerna-debug.log*
+*.log
+*.cache
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
+# ───────────────────────────────────────────
+#  EDITORES
+# ───────────────────────────────────────────
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
 .idea
-.DS_Store
+
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# ───────────────────────────────────────────
+#  SISTEMAS OPERATIVOS
+# ───────────────────────────────────────────
+Thumbs.db
+desktop.ini

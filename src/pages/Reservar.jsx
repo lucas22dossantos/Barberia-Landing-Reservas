@@ -1,12 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+// import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+
+// Supabase
+import { supabase } from "../lib/supabaseClient";
+
 //components
 import Steps from "../components/Steps";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 export default function Reservar() {
+  const [servicios, setServicios] = useState([]);
+  const [barberos, setBarberos] = useState([]);
+
   const [form, setForm] = useState({
     servicio: "",
     barbero: "",
@@ -18,42 +26,50 @@ export default function Reservar() {
     notas: "",
   });
 
+  const servicioActual = servicios.find((s) => s.id === form.servicio);
+  const barberoActual = barberos.find((b) => b.id === form.barbero);
+
+  const navigate = useNavigate();
+
+  // 🔥 Cargar servicios y barberos al iniciar
+  useEffect(() => {
+    fetchServicios();
+    fetchBarberos();
+  }, []);
+
+  const fetchServicios = async () => {
+    const { data, error } = await supabase
+      .from("servicios")
+      .select("*")
+      .eq("activo", true);
+
+    if (!error) setServicios(data);
+  };
+
+  const fetchBarberos = async () => {
+    const { data, error } = await supabase
+      .from("barberos")
+      .select("*")
+      .eq("activo", true);
+
+    if (!error) setBarberos(data);
+  };
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const navigate = useNavigate();
-
+  // 🚀 Aquí ya no usamos servicios "quemados"
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const serviciosData = {
-      "Corte Signature": {
-        nombre: "Corte Signature",
-        precio: 45,
-        duracion: "45 minutos",
-      },
-      "Corte Clásico": {
-        nombre: "Corte Clásico",
-        precio: 40,
-        duracion: "35 minutos",
-      },
-      "Afeitado Completo": {
-        nombre: "Afeitado Completo",
-        precio: 30,
-        duracion: "25 minutos",
-      },
-      "Barba + Corte": {
-        nombre: "Barba + Corte",
-        precio: 55,
-        duracion: "50 minutos",
-      },
-    };
+    const servicioSeleccionado = servicios.find((s) => s.id === form.servicio);
 
     navigate("/confirmar", {
       state: {
         ...form,
-        servicio: serviciosData[form.servicio],
+        servicio: servicioSeleccionado,
+        barbero: barberoActual,
       },
     });
   };
@@ -104,10 +120,12 @@ export default function Reservar() {
                     onChange={handleChange}
                   >
                     <option value="">Selecciona</option>
-                    <option>Corte Signature</option>
-                    <option>Corte Clásico</option>
-                    <option>Afeitado Completo</option>
-                    <option>Barba + Corte</option>
+
+                    {servicios.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.nombre}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -118,9 +136,12 @@ export default function Reservar() {
                     className="w-full p-3 rounded-lg bg-[#262525] text-sm"
                     onChange={handleChange}
                   >
-                    <option>Cualquiera</option>
-                    <option>Barbero 1</option>
-                    <option>Barbero 2</option>
+                    <option value="">Cualquiera</option>
+                    {barberos.map((b) => (
+                      <option key={b.id} value={b.id}>
+                        {b.nombre}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -221,12 +242,16 @@ export default function Reservar() {
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between border-b border-gray-600/30 pb-2">
                   <span>Servicio</span>
-                  <span className="font-semibold">{form.servicio || "—"}</span>
+                  <span className="font-semibold">
+                    {servicioActual ? servicioActual.nombre : "—"}
+                  </span>
                 </div>
 
                 <div className="flex justify-between border-b border-gray-600/30 pb-2">
                   <span>Duración estimada</span>
-                  <span className="font-semibold">45 minutos</span>
+                  <span className="font-semibold">
+                    {servicioActual ? `${servicioActual.duracion} min` : "—"}
+                  </span>
                 </div>
 
                 <div className="flex justify-between border-b border-gray-600/30 pb-2">
@@ -239,13 +264,17 @@ export default function Reservar() {
                 <div className="flex justify-between border-b border-gray-600/30 pb-2">
                   <span>Barbero</span>
                   <span className="font-semibold">
-                    {form.barbero || "Cualquiera disponible"}
+                    {barberoActual
+                      ? barberoActual.nombre
+                      : "Cualquiera disponible"}
                   </span>
                 </div>
 
                 <div className="flex justify-between font-semibold text-lg pt-2">
                   <span>Precio estimado</span>
-                  <span>$45</span>
+                  <span>
+                    {servicioActual ? `$${servicioActual.precio}` : "—"}
+                  </span>
                 </div>
 
                 <div className="mt-4 bg-[#262525] p-3 rounded-lg text-gray-300 text-sm flex items-center gap-2">
