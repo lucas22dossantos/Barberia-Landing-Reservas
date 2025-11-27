@@ -1,41 +1,30 @@
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import React from "react";
 import useReveal from "../hooks/useReveal";
 
-const serviciosData = [
-  {
-    titulo: "Corte Signature",
-    descripcion: "Consulta, corte y peinado con productos premium.",
-    precio: "$45",
-  },
-  {
-    titulo: "Skin Fade",
-    descripcion: "Fade al ras con acabado detallado y estilo.",
-    precio: "$55",
-  },
-  {
-    titulo: "Afeitado Toalla Caliente",
-    descripcion: "Afeitado a navaja con ritual de toalla caliente y bálsamo.",
-    precio: "$40",
-  },
-  {
-    titulo: "Perfilado y Barba",
-    descripcion: "Líneas limpias, forma y acabado para una barba impecable.",
-    precio: "$25",
-  },
-  {
-    titulo: "Corte + Barba",
-    descripcion: "Corte completo con arreglo de barba y toalla caliente.",
-    precio: "$65",
-  },
-  {
-    titulo: "Corte Niños",
-    descripcion: "Cortes atentos y pacientes para menores de 12 años.",
-    precio: "$30",
-  },
-];
+// Supabase
+import { supabase } from "../lib/supabaseClient";
 
 export default function Servicios() {
+  const [servicios, setServicios] = useState([]);
+
+  useEffect(() => {
+    const fetchServicios = async () => {
+      const { data, error } = await supabase
+        .from("servicios")
+        .select("*")
+        .limit(6);
+
+      if (error) {
+        console.error("Error al cargar los servicios:", error);
+      } else {
+        setServicios(data);
+      }
+    };
+
+    fetchServicios();
+  }, []);
+
   return (
     <section className="py-12 bg-[#2f2b27] min-h-screen">
       <div id="servicios" className="max-w-6xl mx-auto px-6">
@@ -55,7 +44,7 @@ export default function Servicios() {
               ref={ref}
               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
             >
-              {serviciosData.map((servicio, index) => (
+              {servicios.map((servicio, index) => (
                 <div key={index} className="h-full">
                   <div
                     style={{ animationDelay: `${index * 100}ms` }}
@@ -64,7 +53,7 @@ export default function Servicios() {
                     } bg-[#141313] p-4 rounded-xl shadow-lg transition-transform duration-300 transform hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl flex flex-col h-full`}
                   >
                     <h2 className="text-2xl sm:text-xl font-semibold mb-2 text-white">
-                      {servicio.titulo}
+                      {servicio.nombre}
                     </h2>
 
                     <p className="text-[#9a9a9a] mb-4 text-base sm:text-sm">
