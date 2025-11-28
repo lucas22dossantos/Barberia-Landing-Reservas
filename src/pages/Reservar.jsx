@@ -72,7 +72,7 @@ export default function Reservar() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // 🚀 Aquí ya no usamos servicios "quemados"
+  // Aquí ya no usamos servicios "quemados"
   const handleSubmit = (e) => {
     e.preventDefault();
 

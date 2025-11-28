@@ -1,6 +1,52 @@
-import React from "react";
+import emailjs from "@emailjs/browser";
+import React, { useState } from "react";
 
 export default function Contacto() {
+  const [form, setForm] = useState({
+    nombre: "",
+    correo: "",
+    telefono: "",
+    mensaje: "",
+  });
+
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!form.nombre || !form.correo || !form.mensaje) {
+      alert("Por favor completa los campos obligatorios.");
+      return;
+    }
+
+    try {
+      const response = await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        form,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+
+      console.log("Email enviado:", response);
+      alert("Mensaje enviado con éxito 🎉");
+
+      setForm({
+        nombre: "",
+        correo: "",
+        telefono: "",
+        mensaje: "",
+      });
+    } catch (error) {
+      console.error("Error enviando email:", error);
+      alert("Error enviando el mensaje, intenta nuevamente.");
+    }
+  };
+
   return (
     <section className="py-12 md:py-20 bg-[#2f2b27]" id="contacto">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -18,7 +64,11 @@ export default function Contacto() {
         <div className="grid md:grid-cols-2 gap-8">
           {/* Formulario */}
           <div className="bg-[#141313] p-6 rounded-lg">
-            <form className="space-y-5" aria-label="Formulario de contacto">
+            <form
+              className="space-y-5"
+              aria-label="Formulario de contacto"
+              onSubmit={handleSubmit}
+            >
               <div>
                 <label
                   htmlFor="nombre"
@@ -30,6 +80,8 @@ export default function Contacto() {
                   name="nombre"
                   type="text"
                   id="nombre"
+                  value={form.nombre}
+                  onChange={handleChange}
                   placeholder="Tu nombre completo"
                   className="w-full bg-[#2f2b27] text-white px-4 py-3 rounded-lg border border-white/10 focus:border-[#bfa16a] focus:outline-none focus:ring-2 focus:ring-[#bfa16a]/30 transition"
                   aria-required="true"
@@ -47,6 +99,8 @@ export default function Contacto() {
                   name="correo"
                   type="email"
                   id="correo"
+                  value={form.correo}
+                  onChange={handleChange}
                   placeholder="tu@email.com"
                   className="w-full bg-[#2f2b27] text-white px-4 py-3 rounded-lg border border-white/10 focus:border-[#bfa16a] focus:outline-none focus:ring-2 focus:ring-[#bfa16a]/30 transition"
                   aria-required="true"
@@ -64,6 +118,8 @@ export default function Contacto() {
                   name="telefono"
                   type="tel"
                   id="telefono"
+                  value={form.telefono}
+                  onChange={handleChange}
                   placeholder="(+54) 3765 000000"
                   className="w-full bg-[#2f2b27] text-white px-4 py-3 rounded-lg border border-white/10 focus:border-[#bfa16a] focus:outline-none focus:ring-2 focus:ring-[#bfa16a]/30 transition"
                 />
@@ -79,6 +135,8 @@ export default function Contacto() {
                 <textarea
                   name="mensaje"
                   id="mensaje"
+                  value={form.mensaje}
+                  onChange={handleChange}
                   rows="4"
                   placeholder="Cuéntanos más detalles..."
                   className="w-full bg-[#2f2b27] text-white px-4 py-3 rounded-lg border border-white/10 focus:border-[#bfa16a] focus:outline-none focus:ring-2 focus:ring-[#bfa16a]/30 transition resize-none"
