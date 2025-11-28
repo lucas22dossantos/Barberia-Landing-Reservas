@@ -68,27 +68,6 @@ export default function BookingConfirm() {
       // Éxito
       setModalType("success");
       setIsModalOpen(true);
-
-      // Abrir WhatsApp (usar data.email, no data.correo)
-      const telefonoBarberia = "3764000000"; // Reemplazar con el número real
-      const mensaje = encodeURIComponent(`
-      ¡Hola! Quiero confirmar mi turno.
-
-      🧔‍♂️ *Detalles de la cita*
-      • Nombre: ${data.nombre}
-      • Teléfono: ${data.telefono || "No proporcionado"}
-      • Correo: ${data.email || "No proporcionado"}
-      • Servicio: ${data.servicio?.nombre || "—"}
-      • Duración: ${data.servicio?.duracion || "—"}
-      • Precio: $${data.servicio?.precio ?? "—"}
-      • Barbero: ${data.barbero?.nombre || "Cualquiera"}
-      • Fecha: ${data.fecha}
-      • Hora: ${data.hora}
-
-      ¿Puedo recibir instrucciones para realizar el pago y asegurar mi turno?
-      `);
-
-      window.open(`https://wa.me/${telefonoBarberia}?text=${mensaje}`);
     } catch (err) {
       console.error("Insert exception:", err);
       setModalType("error");
@@ -226,9 +205,12 @@ export default function BookingConfirm() {
         </motion.div>
 
         {/* MODAL */}
-        {/* <Modal
+        <Modal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            navigate("/"); // Redirige al inicio después de cerrar el modal
+          }}
           title={modalType === "success" ? "Cita confirmada" : "Error"}
         >
           {modalType === "success" ? (
@@ -236,8 +218,14 @@ export default function BookingConfirm() {
               <div className="text-green-500 text-4xl mx-auto w-fit mb-3">
                 ✓
               </div>
-              <p className="text-center text-sm">
-                Tu cita ha sido confirmada exitosamente.
+
+              <p className="text-center text-sm mb-1">
+                Tu cita ha sido confirmada correctamente.
+              </p>
+
+              <p className="text-center text-xs text-gray-300">
+                Nos pondremos en contacto contigo por WhatsApp para confirmar
+                los detalles.
               </p>
             </>
           ) : (
@@ -245,7 +233,7 @@ export default function BookingConfirm() {
               Por favor ingresa tu teléfono o correo electrónico.
             </p>
           )}
-        </Modal> */}
+        </Modal>
       </section>
 
       <Footer />

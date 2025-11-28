@@ -48,11 +48,11 @@ export default function Reservar() {
       nuevosErrores.telefono = "Formato de teléfono inválido.";
     }
 
-    // Email
+    // Correo
     if (!form.email.trim()) {
-      nuevosErrores.email = "El email es obligatorio.";
+      nuevosErrores.email = "El correo es obligatorio.";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      nuevosErrores.email = "Email inválido.";
+      nuevosErrores.email = "Correo inválido.";
     }
 
     setErrors(nuevosErrores);
@@ -61,20 +61,21 @@ export default function Reservar() {
   };
 
   const location = useLocation();
-  const { servicio } = location.state || {}; // recibimos el servicio pasado
+  // const { servicio } = location.state || {}; // recibimos el servicio pasado
+  const dataEdit = location.state || null;
 
   const [servicios, setServicios] = useState([]);
   const [barberos, setBarberos] = useState([]);
 
   const [form, setForm] = useState({
-    servicio: "",
-    barbero: "",
-    fecha: "",
-    hora: "",
-    nombre: "",
-    telefono: "",
-    email: "",
-    notas: "",
+    servicio: dataEdit?.servicio?.id || "",
+    barbero: dataEdit?.barbero?.id || "",
+    fecha: dataEdit?.fecha || "",
+    hora: dataEdit?.hora || "",
+    nombre: dataEdit?.nombre || "",
+    telefono: dataEdit?.telefono || "",
+    email: dataEdit?.email || "",
+    notas: dataEdit?.notas || "",
   });
 
   const servicioActual = servicios.find((s) => s.id === form.servicio);
@@ -87,16 +88,6 @@ export default function Reservar() {
     fetchServicios();
     fetchBarberos();
   }, []);
-
-  // Pre-cargar servicio elegido
-  useEffect(() => {
-    if (servicio) {
-      setForm((prev) => ({
-        ...prev,
-        servicio: servicio.id, // ponemos el id en el select
-      }));
-    }
-  }, [servicio]);
 
   const fetchServicios = async () => {
     const { data, error } = await supabase
@@ -185,8 +176,8 @@ export default function Reservar() {
                   <label className="block text-xs mb-1">Servicio</label>
                   <select
                     name="servicio"
-                    value={form.servicio}
                     className="w-full p-3 rounded-lg bg-[#262525] text-sm"
+                    value={form.servicio}
                     onChange={handleChange}
                   >
                     <option value="">Selecciona</option>
@@ -210,6 +201,7 @@ export default function Reservar() {
                   <select
                     name="barbero"
                     className="w-full p-3 rounded-lg bg-[#262525] text-sm"
+                    value={form.barbero}
                     onChange={handleChange}
                   >
                     <option value="">Cualquiera</option>
@@ -230,6 +222,7 @@ export default function Reservar() {
                     type="date"
                     name="fecha"
                     className="w-full p-3 rounded-lg bg-[#262525] text-sm"
+                    value={form.fecha}
                     onChange={handleChange}
                   />
                   {/* Mostrar error si existe */}
@@ -244,6 +237,7 @@ export default function Reservar() {
                     type="time"
                     name="hora"
                     className="w-full p-3 rounded-lg bg-[#262525] text-sm"
+                    value={form.hora}
                     onChange={handleChange}
                   />
                   {/* Mostrar error si existe */}
@@ -262,6 +256,7 @@ export default function Reservar() {
                     name="nombre"
                     className="w-full p-3 rounded-lg bg-[#262525] text-sm"
                     placeholder="Juan Pérez"
+                    value={form.nombre}
                     onChange={handleChange}
                   />
                   {/* Mostrar error si existe */}
@@ -277,6 +272,7 @@ export default function Reservar() {
                     name="telefono"
                     className="w-full p-3 rounded-lg bg-[#262525] text-sm"
                     placeholder="(555) 123-4567"
+                    value={form.telefono}
                     onChange={handleChange}
                   />
                   {/* Mostrar error si existe */}
@@ -296,6 +292,7 @@ export default function Reservar() {
                   name="email"
                   className="w-full p-3 rounded-lg bg-[#262525] text-sm"
                   placeholder="juan@example.com"
+                  value={form.email}
                   onChange={handleChange}
                 />
                 {/* Mostrar error si existe */}
@@ -312,6 +309,7 @@ export default function Reservar() {
                   rows="2"
                   className="w-full p-3 rounded-lg bg-[#262525] text-sm"
                   placeholder="Notas para el barbero..."
+                  value={form.notas}
                   onChange={handleChange}
                 ></textarea>
               </div>
