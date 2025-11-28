@@ -1,6 +1,6 @@
 # **Barbería Landing con Sistema de Reservas**
 
-Landing page para una barbería desarrollada con React y Vite. Incluye un sistema de reservas, diseño responsive, animaciones y una navegación moderna orientada a la experiencia del usuario.
+Landing page para una barbería desarrollada con **React** y **Vite**. Incluye un **sistema de reservas**, diseño **responsive**, animaciones suaves y navegación moderna orientada a la experiencia del usuario.
 
 ---
 
@@ -10,26 +10,30 @@ Landing page para una barbería desarrollada con React y Vite. Incluye un sistem
 2. Tecnologías
 3. Instalación
 4. Uso
-5. Estructura del Proyecto
-6. Contribuir
-7. Licencia
-8. Contacto
+5. Funcionalidades
+6. Estructura del Proyecto
+7. Contribuir
+8. Licencia
+9. Contacto
 
 ---
 
 ## Descripción
 
-Este proyecto consiste en una landing page para una barbería con el objetivo de mostrar servicios, destacar el estilo visual y permitir a los usuarios solicitar un turno mediante un formulario. La aplicación está diseñada para funcionar correctamente en dispositivos móviles, tablets y escritorio. Incluye animaciones suaves, componentes reutilizables y diseño responsive.
+Este proyecto consiste en una landing page para una barbería con el objetivo de mostrar servicios, destacar el estilo visual y permitir a los usuarios **solicitar un turno mediante un formulario**. La aplicación está diseñada para funcionar correctamente en dispositivos móviles, tablets y escritorio. Incluye animaciones suaves, componentes reutilizables y diseño responsive.
 
 ---
 
 ## Tecnologías
 
-React
-Vite
-Tailwind CSS
-JavaScript ES6
-ESLint
+- React
+- Vite
+- Tailwind CSS
+- Sass
+- JavaScript ES6+
+- Supabase (para almacenamiento de reservas)
+- EmailJS (para notificaciones por correo)
+- ESLint
 
 ---
 
@@ -55,7 +59,35 @@ Luego abrir la URL que muestre la terminal (por defecto [http://localhost:5173](
 
 ## Uso
 
-Cuando el servidor está en funcionamiento, se puede navegar por las secciones de la landing. El formulario de reservas permite ingresar datos del cliente y el servicio deseado. Los datos pueden visualizarse en consola o integrarse más adelante a un backend real.
+Cuando el servidor está en funcionamiento, se puede navegar por las secciones de la landing.
+El formulario de reservas permite ingresar datos del cliente y el servicio deseado, con la opción de elegir un barbero específico o "Cualquiera".
+Los datos se guardan en Supabase, y al confirmar la reserva se muestra un modal de notificación al usuario con opción de editar los datos antes de enviar.
+
+---
+
+## Funcionalidades
+
+- Diseño responsive: se adapta a móviles, tablets y desktop.
+
+- Sistema de reservas:
+
+  - Selección de barbero o "Cualquiera".
+
+  - Validaciones de formulario.
+
+  - Confirmación de reserva con opción de editar datos.
+
+  - Guardado de reservas en base de datos Supabase.
+
+  - Feedback al usuario mediante modal personalizado.
+
+- Formulario de contacto:
+
+  - Mensajes enviados con modal de confirmación.
+
+- Secciones de servicios y equipo con animaciones suaves.
+
+- Navegación fluida y scroll animado.
 
 ---
 
