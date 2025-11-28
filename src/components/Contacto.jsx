@@ -13,36 +13,36 @@ export default function Contacto() {
   const validarFormulario = () => {
     const nuevosErrores = {};
 
-    // Nombre
+    // Nombre (solo letras, mínimo 3)
     if (!form.nombre.trim()) {
       nuevosErrores.nombre = "El nombre es obligatorio.";
-    } else if (form.nombre.length < 3) {
-      nuevosErrores.nombre = "El nombre debe tener al menos 3 caracteres.";
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{3,}$/.test(form.nombre)) {
+      nuevosErrores.nombre =
+        "El nombre debe tener al menos 3 letras y sin símbolos.";
     }
 
-    // Teléfono
+    // Teléfono (exactamente 10 dígitos)
     if (!form.telefono.trim()) {
       nuevosErrores.telefono = "El teléfono es obligatorio.";
-    } else if (!/^[0-9+\s-]{6,15}$/.test(form.telefono)) {
-      nuevosErrores.telefono = "Formato de teléfono inválido.";
+    } else if (!/^\d{10}$/.test(form.telefono)) {
+      nuevosErrores.telefono = "El teléfono debe tener exactamente 10 números.";
     }
 
     // Email
     if (!form.correo.trim()) {
       nuevosErrores.correo = "El correo es obligatorio.";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.correo)) {
-      nuevosErrores.correo = "Correo inválido.";
+      nuevosErrores.correo = "Correo electrónico inválido.";
     }
 
-    // mensaje
+    // Mensaje (mínimo 10 caracteres)
     if (!form.mensaje.trim()) {
       nuevosErrores.mensaje = "El mensaje es obligatorio.";
-    } else if (form.mensaje.length < 5) {
-      nuevosErrores.mensaje = "El mensaje debe tener al menos 5 caracteres.";
+    } else if (form.mensaje.trim().length < 10) {
+      nuevosErrores.mensaje = "El mensaje debe tener al menos 10 caracteres.";
     }
 
     setErrors(nuevosErrores);
-
     return Object.keys(nuevosErrores).length === 0;
   };
 
@@ -76,7 +76,9 @@ export default function Contacto() {
       );
 
       console.log("Email enviado:", response);
-      setModalMessage("¡Listo! Tu mensaje se envió con éxito. Nos pondremos en contacto pronto.");
+      setModalMessage(
+        "¡Listo! Tu mensaje se envió con éxito. Nos pondremos en contacto pronto."
+      );
       setModalOpen(true);
 
       setForm({
