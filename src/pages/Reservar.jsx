@@ -24,34 +24,62 @@ export default function Reservar() {
       nuevosErrores.servicio = "Debes seleccionar un servicio.";
     }
 
-    // Fecha
-    if (!form.fecha) {
-      nuevosErrores.fecha = "Debes elegir una fecha.";
-    }
-
-    // Hora
+    // Hora y fecha con horarios del local
     if (!form.hora) {
       nuevosErrores.hora = "Debes elegir un horario.";
+    } else if (form.fecha) {
+      const fechaSeleccionada = new Date(form.fecha);
+      const diaSemana = fechaSeleccionada.getDay(); // 0 = Domingo, 1 = Lunes...
+
+      const [hora, minutos] = form.hora.split(":").map(Number);
+      const totalMinutos = hora * 60 + minutos;
+
+      let apertura, cierre;
+
+      // Domingo
+      if (diaSemana === 0) {
+        apertura = 10 * 60; // 10:00
+        cierre = 16 * 60; // 16:00
+      }
+      // Lunes a Sábado
+      else {
+        apertura = 9 * 60; // 09:00
+        cierre = 19 * 60; // 19:00
+      }
+
+      if (totalMinutos < apertura || totalMinutos > cierre) {
+        nuevosErrores.hora = `El horario disponible para ese día es de ${
+          apertura / 60
+        }:00 a ${cierre / 60}:00.`;
+      }
     }
 
-    // Nombre
+    // Nombre (sin números, mínimo 3)
     if (!form.nombre.trim()) {
       nuevosErrores.nombre = "El nombre es obligatorio.";
-    } else if (form.nombre.length < 3) {
+    } else if (!/^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/.test(form.nombre)) {
+      nuevosErrores.nombre = "El nombre solo puede contener letras.";
+    } else if (form.nombre.trim().length < 3) {
       nuevosErrores.nombre = "El nombre debe tener al menos 3 caracteres.";
     }
 
-    // Teléfono
+    // Teléfono — SOLO NÚMEROS — exactamente 10 dígitos
+    const digitosTelefono = form.telefono.replace(/\D/g, ""); // quita todo lo que no es número
+
     if (!form.telefono.trim()) {
       nuevosErrores.telefono = "El teléfono es obligatorio.";
-    } else if (!/^[0-9+\s-]{6,15}$/.test(form.telefono)) {
-      nuevosErrores.telefono = "Formato de teléfono inválido.";
+    } else if (!/^[0-9]+$/.test(form.telefono)) {
+      nuevosErrores.telefono = "Solo se permiten números.";
+    } else if (digitosTelefono.length !== 10) {
+      nuevosErrores.telefono = "El teléfono debe tener exactamente 10 números.";
     }
 
-    // Correo
+    // Email
     if (!form.email.trim()) {
       nuevosErrores.email = "El correo es obligatorio.";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+    } else if (
+      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/.test(form.email)
+    ) {
       nuevosErrores.email = "Correo inválido.";
     }
 
@@ -61,7 +89,6 @@ export default function Reservar() {
   };
 
   const location = useLocation();
-  // const { servicio } = location.state || {}; // recibimos el servicio pasado
   const dataEdit = location.state || null;
 
   const [servicios, setServicios] = useState([]);
@@ -318,10 +345,12 @@ export default function Reservar() {
               <div className="flex gap-3 mt-3">
                 <button
                   type="submit"
-                  className="bg-[#bfa16a] text-[#2f2b27] px-4 py-2 rounded-lg text-sm font-semibold w-full sm:w-auto"
+                  className="bg-[#bfa16a] text-[#2f2b27] px-4 py-2 rounded-lg text-sm font-semibold w-full sm:w-auto
+             hover:bg-[#a78c5c] hover:scale-105 transition-all duration-200 cursor-pointer"
                 >
                   Continuar
                 </button>
+
                 <a
                   href="/"
                   className="px-4 py-2 bg-gray-600/30 border border-gray-600 rounded-lg text-sm w-full sm:w-auto text-center"

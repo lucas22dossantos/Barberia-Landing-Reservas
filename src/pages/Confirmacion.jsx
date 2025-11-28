@@ -142,14 +142,14 @@ export default function BookingConfirm() {
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-3">
                   <button
                     onClick={handleConfirm}
-                    className="bg-[#bfa16a] text-[#2f2b27] px-4 py-2.5 rounded-lg font-semibold hover:bg-[#d8b779] transition text-sm w-full sm:w-auto"
+                    className="bg-[#bfa16a] text-[#2f2b27] px-4 py-2.5 rounded-lg font-semibold hover:bg-[#d8b779] transition text-sm w-full sm:w-auto cursor-pointer"
                   >
                     Confirmar cita
                   </button>
 
                   <button
                     onClick={() => navigate("/reservar", { state: data })}
-                    className="px-4 py-2.5 bg-gray-600/30 border border-gray-600 rounded-lg hover:bg-[#2a2927] transition text-sm w-full sm:w-auto"
+                    className="px-4 py-2.5 bg-gray-600/30 border border-gray-600 rounded-lg hover:bg-[#2a2927] transition text-sm w-full sm:w-auto cursor-pointer"
                   >
                     Editar detalles
                   </button>
