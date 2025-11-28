@@ -12,6 +12,54 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 export default function Reservar() {
+  // estado de errores
+  const [errors, setErrors] = useState({});
+
+  // función para validar el formulario
+  const validarFormulario = () => {
+    const nuevosErrores = {};
+
+    // Servicio
+    if (!form.servicio) {
+      nuevosErrores.servicio = "Debes seleccionar un servicio.";
+    }
+
+    // Fecha
+    if (!form.fecha) {
+      nuevosErrores.fecha = "Debes elegir una fecha.";
+    }
+
+    // Hora
+    if (!form.hora) {
+      nuevosErrores.hora = "Debes elegir un horario.";
+    }
+
+    // Nombre
+    if (!form.nombre.trim()) {
+      nuevosErrores.nombre = "El nombre es obligatorio.";
+    } else if (form.nombre.length < 3) {
+      nuevosErrores.nombre = "El nombre debe tener al menos 3 caracteres.";
+    }
+
+    // Teléfono
+    if (!form.telefono.trim()) {
+      nuevosErrores.telefono = "El teléfono es obligatorio.";
+    } else if (!/^[0-9+\s-]{6,15}$/.test(form.telefono)) {
+      nuevosErrores.telefono = "Formato de teléfono inválido.";
+    }
+
+    // Email
+    if (!form.email.trim()) {
+      nuevosErrores.email = "El email es obligatorio.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      nuevosErrores.email = "Email inválido.";
+    }
+
+    setErrors(nuevosErrores);
+
+    return Object.keys(nuevosErrores).length === 0;
+  };
+
   const location = useLocation();
   const { servicio } = location.state || {}; // recibimos el servicio pasado
 
@@ -75,6 +123,10 @@ export default function Reservar() {
   // Aquí ya no usamos servicios "quemados"
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!validarFormulario()) {
+      return;
+    }
 
     const servicioSeleccionado = servicios.find((s) => s.id === form.servicio);
     const barberoSeleccionado =
@@ -145,6 +197,12 @@ export default function Reservar() {
                       </option>
                     ))}
                   </select>
+                  {/* Mostrar error si existe */}
+                  {errors.servicio && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.servicio}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -174,6 +232,10 @@ export default function Reservar() {
                     className="w-full p-3 rounded-lg bg-[#262525] text-sm"
                     onChange={handleChange}
                   />
+                  {/* Mostrar error si existe */}
+                  {errors.fecha && (
+                    <p className="text-red-500 text-xs mt-1">{errors.fecha}</p>
+                  )}
                 </div>
 
                 <div>
@@ -184,6 +246,10 @@ export default function Reservar() {
                     className="w-full p-3 rounded-lg bg-[#262525] text-sm"
                     onChange={handleChange}
                   />
+                  {/* Mostrar error si existe */}
+                  {errors.hora && (
+                    <p className="text-red-500 text-xs mt-1">{errors.hora}</p>
+                  )}
                 </div>
               </div>
 
@@ -198,6 +264,10 @@ export default function Reservar() {
                     placeholder="Juan Pérez"
                     onChange={handleChange}
                   />
+                  {/* Mostrar error si existe */}
+                  {errors.nombre && (
+                    <p className="text-red-500 text-xs mt-1">{errors.nombre}</p>
+                  )}
                 </div>
 
                 <div>
@@ -209,6 +279,12 @@ export default function Reservar() {
                     placeholder="(555) 123-4567"
                     onChange={handleChange}
                   />
+                  {/* Mostrar error si existe */}
+                  {errors.telefono && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.telefono}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -222,6 +298,10 @@ export default function Reservar() {
                   placeholder="juan@example.com"
                   onChange={handleChange}
                 />
+                {/* Mostrar error si existe */}
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                )}
               </div>
 
               {/* Notas */}
