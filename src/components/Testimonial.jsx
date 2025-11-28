@@ -5,18 +5,18 @@ const testimoniosData = [
     texto:
       "“El mejor fade que me han hecho en años. La atención al detalle es impresionante.”",
     nombre: "Juan Pérez",
-    img: "/public/img/perfil-01.webp",
+    img: "/img/perfil-01.webp",
   },
   {
     texto: "“Ambiente agradable y cortes perfectos. Siempre salgo satisfecho.”",
     nombre: "Mario López",
-    img: "/public/img/perfil-02.webp",
+    img: "/img/perfil-02.webp",
   },
   {
     texto:
       "“Profesionales de verdad, con productos de calidad y gran paciencia.”",
     nombre: "Carlos Ramírez",
-    img: "/public/img/perfil-03.webp",
+    img: "/img/perfil-03.webp",
   },
 ];
 
