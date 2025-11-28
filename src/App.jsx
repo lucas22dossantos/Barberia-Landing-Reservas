@@ -4,7 +4,7 @@ import { AnimatePresence } from "framer-motion";
 import Home from "./pages/Home";
 import Reservar from "./pages/Reservar";
 import Confirmacion from "./pages/Confirmacion";
-import Politicas from "./pages/politicas";
+import Politicas from "./pages/Politicas";
 
 function AnimatedRoutes() {
   const location = useLocation();
