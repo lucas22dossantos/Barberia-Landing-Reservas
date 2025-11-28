@@ -1,3 +1,9 @@
+## Demo en Producción
+
+Puedes ver el proyecto funcionando aquí:
+
+🔗 **https://barberia-rho-seven.vercel.app/**
+
 # **Barbería Landing con Sistema de Reservas**
 
 Landing page para una barbería desarrollada con **React** y **Vite**. Incluye un **sistema de reservas**, diseño **responsive**, animaciones suaves y navegación moderna orientada a la experiencia del usuario.
