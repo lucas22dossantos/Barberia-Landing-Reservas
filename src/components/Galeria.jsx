@@ -24,7 +24,12 @@ export default function Galeria() {
           return (
             <div
               ref={ref}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+              className="
+    grid grid-cols-1 
+    sm:grid-cols-2 
+    lg:grid-cols-3 
+    gap-4 sm:gap-5 lg:gap-6
+  "
             >
               {galeriaData.map((img, index) => (
                 <div
@@ -37,7 +42,10 @@ export default function Galeria() {
                   <img
                     src={img.src}
                     alt={img.alt}
-                    className="w-full h-48 sm:h-52 md:h-56 object-cover transition-transform duration-300 hover:scale-105"
+                    className="
+          w-full object-cover transition-transform duration-300 hover:scale-105
+          h-48 sm:h-56 lg:h-64
+        "
                   />
                 </div>
               ))}

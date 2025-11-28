@@ -97,9 +97,9 @@ export default function Contacto() {
   return (
     <>
       <section className="py-12 md:py-20 bg-[#2f2b27]" id="contacto">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-6 lg:px-6">
           {/* Encabezado */}
-          <div className="mb-10 md:mb-12 text-center md:text-left">
+          <div className="mb-10 text-center md:text-left">
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
               Contáctanos
             </h1>
@@ -109,11 +109,11 @@ export default function Contacto() {
           </div>
 
           {/* Contenido principal */}
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-2 lg:gap-6">
             {/* Formulario */}
-            <div className="bg-[#141313] p-6 rounded-lg">
+            <div className="bg-[#141313] p-4 md:p-6 rounded-lg">
               <form
-                className="space-y-5"
+                className="space-y-3 md:space-y-5"
                 aria-label="Formulario de contacto"
                 onSubmit={handleSubmit}
               >
@@ -134,7 +134,6 @@ export default function Contacto() {
                     className="w-full bg-[#2f2b27] text-white px-4 py-3 rounded-lg border border-white/10 focus:border-[#bfa16a] focus:outline-none focus:ring-2 focus:ring-[#bfa16a]/30 transition"
                     aria-required="true"
                   />
-                  {/* Mostrar error si existe */}
                   {errors.nombre && (
                     <p className="text-red-500 text-xs mt-1">{errors.nombre}</p>
                   )}
@@ -157,7 +156,6 @@ export default function Contacto() {
                     className="w-full bg-[#2f2b27] text-white px-4 py-3 rounded-lg border border-white/10 focus:border-[#bfa16a] focus:outline-none focus:ring-2 focus:ring-[#bfa16a]/30 transition"
                     aria-required="true"
                   />
-                  {/* Mostrar error si existe */}
                   {errors.correo && (
                     <p className="text-red-500 text-xs mt-1">{errors.correo}</p>
                   )}
@@ -179,7 +177,6 @@ export default function Contacto() {
                     placeholder="(+54) 3765 000000"
                     className="w-full bg-[#2f2b27] text-white px-4 py-3 rounded-lg border border-white/10 focus:border-[#bfa16a] focus:outline-none focus:ring-2 focus:ring-[#bfa16a]/30 transition"
                   />
-                  {/* Mostrar error si existe */}
                   {errors.telefono && (
                     <p className="text-red-500 text-xs mt-1">
                       {errors.telefono}
@@ -204,7 +201,6 @@ export default function Contacto() {
                     className="w-full bg-[#2f2b27] text-white px-4 py-3 rounded-lg border border-white/10 focus:border-[#bfa16a] focus:outline-none focus:ring-2 focus:ring-[#bfa16a]/30 transition resize-none"
                     aria-required="true"
                   ></textarea>
-                  {/* Mostrar error si existe */}
                   {errors.mensaje && (
                     <p className="text-red-500 text-xs mt-1">
                       {errors.mensaje}
@@ -224,17 +220,18 @@ export default function Contacto() {
             {/* Información de contacto */}
             <div className="space-y-6">
               <div className="bg-[#141313] rounded-lg overflow-hidden">
-                <div className="aspect-w-16 aspect-h-9">
+                <div className="w-full h-60 md:h-60 lg:aspect-w-16 lg:aspect-h-9">
                   <iframe
                     title="Mapa - BlackGold Barbers"
                     src="https://www.google.com/maps?q=Av.+Kingsway+123&output=embed"
-                    className="w-full h-60 md:h-64 border-0"
+                    className="w-full h-60 md:h-60 lg:h-64 border-0"
                     loading="lazy"
                     aria-label="Mapa de la ubicación de BlackGold Barbers"
                   ></iframe>
                 </div>
 
                 <div className="p-6 space-y-5">
+                  {/* Dirección */}
                   <div className="flex gap-4">
                     <svg
                       className="w-6 h-6 text-white/90 mt-1 flex-shrink-0"
@@ -257,6 +254,7 @@ export default function Contacto() {
                     </p>
                   </div>
 
+                  {/* Teléfono */}
                   <div className="flex gap-4">
                     <svg
                       className="w-6 h-6 text-white/90 mt-1 flex-shrink-0"
@@ -281,6 +279,7 @@ export default function Contacto() {
                     </a>
                   </div>
 
+                  {/* Correo */}
                   <div className="flex gap-4">
                     <svg
                       className="w-6 h-6 text-white/90 mt-1 flex-shrink-0"
@@ -313,6 +312,7 @@ export default function Contacto() {
                     </a>
                   </div>
 
+                  {/* Horario */}
                   <div className="flex gap-4">
                     <svg
                       className="w-6 h-6 text-white/90 mt-1 flex-shrink-0"
@@ -416,6 +416,7 @@ export default function Contacto() {
           </div>
         </div>
       </section>
+
       <Modal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}

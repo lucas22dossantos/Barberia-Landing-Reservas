@@ -22,6 +22,10 @@ export default function BookingConfirm() {
     if (!data) navigate("/");
   }, [data, navigate]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   if (!data) return null;
 
   // Modal state

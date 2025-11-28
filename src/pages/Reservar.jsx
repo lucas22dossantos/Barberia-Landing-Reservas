@@ -116,6 +116,10 @@ export default function Reservar() {
     fetchBarberos();
   }, []);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   const fetchServicios = async () => {
     const { data, error } = await supabase
       .from("servicios")
