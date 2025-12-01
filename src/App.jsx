@@ -23,8 +23,8 @@ function AnimatedRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AnimatedRoutes />
-    </BrowserRouter>
+    // <BrowserRouter>
+    <AnimatedRoutes />
+    // </BrowserRouter>
   );
 }

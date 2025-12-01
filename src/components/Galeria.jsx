@@ -2,12 +2,16 @@ import React from "react";
 import useReveal from "../hooks/useReveal";
 
 const galeriaData = [
-  { src: "/img/galeria-01.webp", alt: "Corte Signature" },
-  { src: "/img/galeria-02.webp", alt: "Skin Fade" },
-  { src: "/img/galeria-03.webp", alt: "Afeitado Toalla Caliente" },
-  { src: "/img/galeria-04.webp", alt: "Perfilado y Barba" },
-  { src: "/img/galeria-05.webp", alt: "Corte + Barba" },
-  { src: "/img/galeria-06.webp", alt: "Corte Niños" },
+  { src: "/img/galeria-01.webp", alt: "Corte Signature", loading: "lazy" },
+  { src: "/img/galeria-02.webp", alt: "Skin Fade", loading: "lazy" },
+  {
+    src: "/img/galeria-03.webp",
+    alt: "Afeitado Toalla Caliente",
+    loading: "lazy",
+  },
+  { src: "/img/galeria-04.webp", alt: "Perfilado y Barba", loading: "lazy" },
+  { src: "/img/galeria-05.webp", alt: "Corte + Barba", loading: "lazy" },
+  { src: "/img/galeria-06.webp", alt: "Corte Niños", loading: "lazy" },
 ];
 
 export default function Galeria() {
@@ -42,6 +46,7 @@ export default function Galeria() {
                   <img
                     src={img.src}
                     alt={img.alt}
+                    loading={img.loading}
                     className="
           w-full object-cover transition-transform duration-300 hover:scale-105
           h-48 sm:h-56 lg:h-64
