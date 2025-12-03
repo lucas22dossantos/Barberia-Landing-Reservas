@@ -4,9 +4,20 @@ Puedes ver el proyecto funcionando aquí:
 
 🔗 **https://barberia-rho-seven.vercel.app/**
 
-# **Barbería Landing con Sistema de Reservas**
+# **Barbería Landing + Sistema de Reservas + Panel Administrativo**
 
-Landing page para una barbería desarrollada con **React** y **Vite**. Incluye un **sistema de reservas**, diseño **responsive**, animaciones suaves y navegación moderna orientada a la experiencia del usuario.
+Proyecto completo para una barbería que incluye:
+
+- **Landing page** (Frontend)
+- **Sistema de reservas**
+- **Panel administrativo** (en construcción)
+- **Backend/Servidor propio** (Node + Express)
+- **Base de datos** (Supabase)
+
+El proyecto está dividido en dos carpetas principales:
+
+- /frontend → React + Vite (Landing + Panel Admin)
+- /backend → Node + Express + Supabase (API REST)
 
 ---
 
@@ -15,9 +26,9 @@ Landing page para una barbería desarrollada con **React** y **Vite**. Incluye u
 1. Descripción
 2. Tecnologías
 3. Instalación
-4. Uso
-5. Funcionalidades
-6. Estructura del Proyecto
+4. Scripts Disponibles
+5. Estructura del Proyecto
+6. Funcionalidades
 7. Contribuir
 8. Licencia
 9. Contacto
@@ -26,20 +37,42 @@ Landing page para una barbería desarrollada con **React** y **Vite**. Incluye u
 
 ## Descripción
 
-Este proyecto consiste en una landing page para una barbería con el objetivo de mostrar servicios, destacar el estilo visual y permitir a los usuarios **solicitar un turno mediante un formulario**. La aplicación está diseñada para funcionar correctamente en dispositivos móviles, tablets y escritorio. Incluye animaciones suaves, componentes reutilizables y diseño responsive.
+Este proyecto consiste en una **landing page profesional** para una barbería, junto con un **sistema de reservas** y un **panel de administración** para gestionar:
+
+- Reservas
+- Usuarios administradores
+- Recuperación de contraseña
+- Inicio de sesión seguro
+
+El backend maneja autenticación, validación de tokens, envío de correos y consulta a la base de datos.
+
+Todo está desarrollado con buenas prácticas, arquitectura organizada y diseño responsive.
 
 ---
 
 ## Tecnologías
+
+### **Frontend**
 
 - React
 - Vite
 - Tailwind CSS
 - Sass
 - JavaScript ES6+
-- Supabase (para almacenamiento de reservas)
-- EmailJS (para notificaciones por correo)
-- ESLint
+- React Router
+- EmailJS
+- AOS Animations
+
+### **Backend**
+
+- Node.js
+- Express
+- Supabase (Base de datos PostgreSQL)
+- JWT (tokens)
+- Bcrypt (hashing de contraseñas)
+- Nodemailer (envío de emails)
+- Cors
+- Dotenv
 
 ---
 
@@ -48,52 +81,91 @@ Este proyecto consiste en una landing page para una barbería con el objetivo de
 Para ejecutar el proyecto en entorno local:
 
 1. Clonar el repositorio.
-   git clone [https://github.com/lucas22dossantos/Barberia-Landing-Reservas.git](https://github.com/lucas22dossantos/Barberia-Landing-Reservas.git)
+   git clone https://github.com/lucas22dossantos/Barberia-Landing-Reservas.git
 
 2. Acceder al directorio.
    cd Barberia-Landing-Reservas
 
-3. Instalar dependencias.
-   npm install
+### Frontend
 
-4. Iniciar el servidor de desarrollo.
-   npm run dev
+- cd frontend
+- npm install
 
-Luego abrir la URL que muestre la terminal (por defecto [http://localhost:5173](http://localhost:5173)).
+Iniciar en desarrollo:
+
+- npm run dev
+
+### Backend
+
+- cd backend
+- npm install
+
+Variables de entorno requeridas:
+
+- backend/.env
+
+  - SUPABASE_URL=
+  - SUPABASE_SERVICE_KEY=
+  - JWT_SECRET=
+  - EMAIL_HOST=
+  - EMAIL_USER=
+  - EMAIL_PASS=
+
+Iniciar el backend:
+
+- npm run dev
+
+El servidor se iniciará en:
+
+- http://localhost:4000 (o el puerto que tengas en el backend)
 
 ---
 
-## Uso
+## Scripts Disponibles
 
-Cuando el servidor está en funcionamiento, se puede navegar por las secciones de la landing.
-El formulario de reservas permite ingresar datos del cliente y el servicio deseado, con la opción de elegir un barbero específico o "Cualquiera".
-Los datos se guardan en Supabase, y al confirmar la reserva se muestra un modal de notificación al usuario con opción de editar los datos antes de enviar.
+### Frontend
+
+- npm run dev → entorno desarrollo
+
+- npm run build → build de producción
+
+- npm run preview → previsualización
+
+### Backend
+
+- npm run dev → servidor con nodemon
+
+- npm start → iniciar servidor en producción
 
 ---
 
 ## Funcionalidades
 
-- Diseño responsive: se adapta a móviles, tablets y desktop.
+### Frontend
 
-- Sistema de reservas:
+- Landing responsiva
 
-  - Selección de barbero o "Cualquiera".
+- Sistema de reservas conectado a Supabase
 
-  - Validaciones de formulario.
+- Animaciones suaves
 
-  - Confirmación de reserva con opción de editar datos.
+- Panel administrativo (login, recuperación de contraseña, dashboard)
 
-  - Guardado de reservas en base de datos Supabase.
+### Backend
 
-  - Feedback al usuario mediante modal personalizado.
+- Autenticación con JWT
 
-- Formulario de contacto:
+- Roles y permisos
 
-  - Mensajes enviados con modal de confirmación.
+- Recuperación de contraseña con token por correo
 
-- Secciones de servicios y equipo con animaciones suaves.
+- Validación de enlaces expirados
 
-- Navegación fluida y scroll animado.
+- CRUD de reservas
+
+- Manejo seguro de contraseñas
+
+- Endpoints REST organizados
 
 ---
 
@@ -102,19 +174,29 @@ Los datos se guardan en Supabase, y al confirmar la reserva se muestra un modal 
 ```
 Barberia-Landing-Reservas/
 │
-├─ public/
-│   └─ index.html
+├── frontend/                # Landing + Panel Admin
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── admin/
+│   │   └── App.jsx
+│   ├──.env
+│   └── package.json
 │
-├─ src/
-│   ├─ components/        Componentes reutilizables (Navbar, Footer, Formulario, etc.)
-│   ├─ pages/             Vistas principales del sitio
-│   ├─ styles/            Configuración y estilos de Tailwind
-│   └─ App.jsx
+├── backend/                 # API REST
+│   ├── src/
+│   │   ├── routes/
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── config/
+│   │   └── server.js
+│   ├── .env
+│   └── package.json
 │
-├─ .gitignore
-├─ package.json
-├─ vite.config.js
-└─ tailwind.config.js
+├── README.md
+├── .gitignore
+
 ```
 
 ---

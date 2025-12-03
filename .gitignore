@@ -1,11 +1,20 @@
 # ───────────────────────────────────────────
-#  ARCHIVOS Y CARPETAS DE VITE / NODE
+#  NODE / DEPENDENCIAS
 # ───────────────────────────────────────────
 node_modules/
-dist/
-.DS_Store
-*.local
 
+# ───────────────────────────────────────────
+#  BUILD / OUTPUT
+# ───────────────────────────────────────────
+dist/
+build/
+
+# ───────────────────────────────────────────
+#  SISTEMAS OPERATIVOS
+# ───────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
 
 # ───────────────────────────────────────────
 #  VARIABLES DE ENTORNO
@@ -13,9 +22,35 @@ dist/
 .env
 .env.*
 !.env.example
+.env.local
+.env.*.local
 
 # ───────────────────────────────────────────
-#  SUPABASE
+#  LOGS
+# ───────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.cache
+
+# ───────────────────────────────────────────
+#  EDITORES / IDE
+# ───────────────────────────────────────────
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ───────────────────────────────────────────
+#  SUPABASE (si lo usás)
 # ───────────────────────────────────────────
 supabase/.temp/
 supabase/.branches/
@@ -24,37 +59,16 @@ supabase/.env
 supabase/.env.*
 supabase/functions/**/build/
 supabase/functions/**/node_modules/
-
-# No subir claves privadas si usás Supabase CLI
 supabase/config.toml
 
 # ───────────────────────────────────────────
-#  LOGS Y ARCHIVOS TEMPORALES
+#  VERCEL
 # ───────────────────────────────────────────
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-*.log
+.vercel/
+
+# ───────────────────────────────────────────
+#  CACHES / TEMPORALES
+# ───────────────────────────────────────────
+*.local
+*.tmp
 *.cache
-
-# ───────────────────────────────────────────
-#  EDITORES
-# ───────────────────────────────────────────
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
-.idea
-
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# ───────────────────────────────────────────
-#  SISTEMAS OPERATIVOS
-# ───────────────────────────────────────────
-Thumbs.db
-desktop.ini
-.vercel
