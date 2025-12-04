@@ -1,23 +1,52 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Login() {
-  const [email, setEmail] = useState("admin@blackgoldbarberia.com");
+  // Leer email guardado SI EXISTE
+  const savedEmail = localStorage.getItem("rememberEmail") || "";
+  // ocultar y mostrar contraseña
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [email, setEmail] = useState(savedEmail);
   const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(false);
+  const [remember, setRemember] = useState(Boolean(savedEmail));
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (email === "admin@blackgoldbarberia.com" && password === "123456") {
-      localStorage.setItem("auth", "true");
+    try {
+      const res = await fetch("http://localhost:4000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Credenciales incorrectas");
+        return;
+      }
+
+      // Guardar token real
+      localStorage.setItem("token", data.token);
+
+      // Guardar email si se seleccionó "Recordarme"
+      if (remember) {
+        localStorage.setItem("rememberEmail", email);
+      } else {
+        localStorage.removeItem("rememberEmail");
+      }
+
       navigate("/admin");
-    } else {
-      setError("Credenciales incorrectas");
+    } catch (err) {
+      setError("Error al conectar con el servidor");
+      console.error(err);
     }
   };
 
@@ -94,12 +123,74 @@ export default function Login() {
 
             <div>
               <label className="text-sm text-gray-300">Contraseña</label>
-              <input
-                type="password"
-                className="w-full mt-1 px-4 py-3 bg-[#1a1a1a] border border-[#2a2a2a] rounded text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#bfa16a]"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className="w-full mt-1 px-4 py-3 pr-12 bg-[#1a1a1a] border border-[#2a2a2a] rounded text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#bfa16a]"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  aria-label="Contraseña"
+                  autoComplete="current-password"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((s) => !s)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-100"
+                  aria-label={
+                    showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+                  }
+                  title={showPassword ? "Ocultar" : "Mostrar"}
+                >
+                  {showPassword ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3 3l18 18"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M10.584 10.587A3 3 0 0113.415 13.41"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9.88 4.318A9.956 9.956 0 0112 4c4.478 0 8.27 2.943 9.543 7a9.98 9.98 0 01-1.249 2.527M6.228 6.228A9.945 9.945 0 002.457 12c1.273 4.057 5.064 7 9.543 7 1.428 0 2.791-.3 4.02-.845"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      />
+                    </svg>
+                  )}
+                </button>
+              </div>
             </div>
 
             {/* Opciones */}
@@ -125,7 +216,7 @@ export default function Login() {
             {/* Botón */}
             <button
               type="submit"
-              className="w-full py-3 bg-[#c8ab69] text-[#2f2b27] font-semibold rounded-lg hover:bg-[#d4bb80] transition"
+              className="cursor-pointer w-full py-3 bg-[#c8ab69] text-[#2f2b27] font-semibold rounded-lg hover:bg-[#d4bb80] transition"
             >
               Entrar al panel
             </button>
