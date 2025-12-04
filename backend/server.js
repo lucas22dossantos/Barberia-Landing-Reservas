@@ -19,7 +19,7 @@ app.use(
 
 // ===== RUTAS =====
 // Importar las rutas de autenticación
-const authRoutes = require("./routes/auth");
+const authRoutes = require("./src/routes/auth");
 
 // Registrar las rutas con el prefijo /api/auth
 app.use("/api/auth", authRoutes);
