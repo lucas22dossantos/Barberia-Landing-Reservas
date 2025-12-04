@@ -6,25 +6,34 @@ require("dotenv").config();
 const app = express();
 
 // ===== MIDDLEWARES =====
-// Permite recibir JSON en las peticiones
 app.use(express.json());
 
-// Permite que el frontend se conecte al backend
+// Configuración de CORS para producción y desarrollo
+const allowedOrigins = [
+  "http://localhost:5173", // desarrollo
+  "https://barberia-rho-seven.vercel.app", // frontend en Vercel
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173", // URL donde corre tu frontend de Vite
+    origin: function (origin, callback) {
+      // Permitir requests sin origin (ej. Postman)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg = "La política de CORS no permite este origen";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
     credentials: true,
   })
 );
 
 // ===== RUTAS =====
-// Importar las rutas de autenticación
 const authRoutes = require("./src/routes/auth");
-
-// Registrar las rutas con el prefijo /api/auth
 app.use("/api/auth", authRoutes);
 
-// Ruta de prueba para verificar que el servidor funciona
+// Ruta de prueba
 app.get("/", (req, res) => {
   res.json({
     message: "🚀 API de BlackGold Barbería funcionando correctamente",
@@ -36,7 +45,7 @@ app.get("/", (req, res) => {
 app.use((err, req, res, next) => {
   console.error("Error:", err.stack);
   res.status(500).json({
-    error: "Algo salió mal en el servidor",
+    error: err.message || "Algo salió mal en el servidor",
   });
 });
 
@@ -45,6 +54,6 @@ const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, () => {
   console.log("==========================================");
-  console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
   console.log("==========================================");
 });
