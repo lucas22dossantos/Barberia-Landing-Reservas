@@ -3,36 +3,56 @@ import { Link } from "react-router-dom";
 import emailjs from "@emailjs/browser";
 
 export default function ForgotPassword() {
-  const [email, setEmail] = useState("admin@blackgoldbarberia.com");
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccess(false);
     setLoading(true);
 
-    const templateParams = {
-      user_email: email,
-      reset_link: "https://tu-dominio.com/reset-password?token=123456",
-    };
+    try {
+      // 1. Pedir token al backend
+      const res = await fetch(
+        "http://localhost:4000/api/auth/forgot-password",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        }
+      );
 
-    emailjs
-      .send(
-        import.meta.env.VITE_EMAILJS_SERVICE,
-        import.meta.env.VITE_EMAILJS_TEMPLATE_FORGOT,
-        templateParams,
-        import.meta.env.VITE_EMAILJS_PUBLIC
-      )
-      .then(() => {
-        setSuccess(true);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError("Ocurrió un error al enviar el correo. Intenta nuevamente.");
-        setLoading(false);
-      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "No se pudo procesar la solicitud.");
+      }
+
+      const token = data.token;
+
+      // 2. Generar el link real con el token
+      const resetLink = `http://localhost:5173/reset-password?token=${token}`;
+
+      // // 3. Enviar el correo con EmailJS
+      // await emailjs.send(
+      //   import.meta.env.VITE_EMAILJS_SERVICE,
+      //   import.meta.env.VITE_EMAILJS_TEMPLATE_FORGOT,
+      //   {
+      //     user_email: email,
+      //     reset_link: resetLink,
+      //   },
+      //   import.meta.env.VITE_EMAILJS_PUBLIC
+      // );
+
+      setSuccess(true);
+    } catch (err) {
+      setError(err.message || "Error inesperado.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

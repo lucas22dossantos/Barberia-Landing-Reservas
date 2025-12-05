@@ -5,19 +5,52 @@ export default function ResetPassword() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
 
-  // Token enviado por email
   const token = params.get("token");
 
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
 
+  const [loading, setLoading] = useState(true);
+  const [tokenValid, setTokenValid] = useState(false);
+
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // 1️⃣ Validar token al cargar la página
+  useEffect(() => {
+    const validateToken = async () => {
+      try {
+        const res = await fetch(
+          "http://localhost:4000/api/auth/validate-reset-token",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token }),
+          }
+        );
 
-    // Validaciones básicas
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || "Token inválido.");
+
+        setTokenValid(true);
+      } catch (err) {
+        setTokenValid(false);
+        setError("expired");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (token) validateToken();
+  }, [token]);
+
+  // 2️⃣ Enviar nueva contraseña
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
     if (password.length < 8) {
       setError("La contraseña debe tener al menos 8 caracteres.");
       return;
@@ -28,16 +61,33 @@ export default function ResetPassword() {
       return;
     }
 
-    // Validación ficticia del token (simulación)
-    if (!token || token === "expired") {
-      setError("expired");
-      return;
-    }
+    try {
+      const res = await fetch("http://localhost:4000/api/auth/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, newPassword: password }),
+      });
 
-    // Éxito (simulado, en backend se cambiaría la contraseña)
-    setSuccess("Contraseña cambiada correctamente. Redirigiendo...");
-    setTimeout(() => navigate("/admin/login"), 2000);
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error);
+
+      setSuccess("Contraseña cambiada correctamente. Redirigiendo...");
+
+      setTimeout(() => navigate("/admin/login"), 2000);
+    } catch (err) {
+      setError(err.message);
+    }
   };
+
+  // MIENTRAS SE VALIDA TOKEN
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex justify-center items-center">
+        <p className="text-gray-300">Validando enlace...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black flex justify-center items-center p-6">
