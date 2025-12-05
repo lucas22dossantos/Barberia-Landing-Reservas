@@ -22,9 +22,7 @@ export default function Login() {
         `${import.meta.env.VITE_API_URL}/api/auth/login`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
         }
       );
@@ -54,7 +52,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] flex justify-center items-center py-10">
+    <main className="min-h-screen bg-[#0f0f0f] flex justify-center items-center py-10">
       {/* CONTENEDOR PRINCIPAL */}
       <div className="w-[900px] h-[560px] bg-white/10 backdrop-blur-xl rounded-xl overflow-hidden flex shadow-2xl border border-white/20 relative">
         {/* LEFT SIDE */}
@@ -62,7 +60,9 @@ export default function Login() {
           <img
             src="/img/barberia-login.webp"
             alt="Barbería"
-            className="h-full w-full object-cover opacity-80"
+            className="h-full w-full object-cover opacity-60"
+            fetchpriority="high"
+            decoding="async"
           />
 
           <div className="absolute inset-0 bg-black/40"></div>
@@ -75,7 +75,7 @@ export default function Login() {
               </div>
               <div>
                 <h2 className="font-semibold text-lg">BlackGold Barbería</h2>
-                <p className="text-sm text-gray-300">
+                <p className="text-sm text-gray-100">
                   Barbería premium. Control interno de citas y servicios.
                 </p>
               </div>
@@ -85,7 +85,7 @@ export default function Login() {
           {/* Panel privado */}
           <div className="absolute bottom-4 left-4 bg-black/40 backdrop-blur-md p-3 rounded-lg text-white max-w-xs">
             <h3 className="font-semibold text-lg">Panel privado</h3>
-            <p className="text-sm text-gray-300 mt-1">
+            <p className="text-sm text-gray-100 mt-1">
               Solo personal autorizado puede acceder.
             </p>
           </div>
@@ -113,10 +113,11 @@ export default function Login() {
             )}
 
             <div>
-              <label className="text-sm text-gray-300">
+              <label htmlFor="email" className="text-sm text-gray-100">
                 Correo electrónico
               </label>
               <input
+                id="email"
                 type="email"
                 className="w-full mt-1 px-4 py-3 bg-[#1a1a1a] border border-[#2a2a2a] rounded text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#bfa16a]"
                 value={email}
@@ -125,10 +126,13 @@ export default function Login() {
             </div>
 
             <div>
-              <label className="text-sm text-gray-300">Contraseña</label>
+              <label htmlFor="password" className="text-sm text-gray-100">
+                Contraseña
+              </label>
 
               <div className="relative">
                 <input
+                  id="password"
                   type={showPassword ? "text" : "password"}
                   className="w-full mt-1 px-4 py-3 pr-12 bg-[#1a1a1a] border border-[#2a2a2a] rounded text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#bfa16a]"
                   value={password}
@@ -140,10 +144,11 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-100"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-100 hover:text-gray-100"
                   aria-label={
                     showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
                   }
+                  aria-pressed={showPassword}
                   title={showPassword ? "Ocultar" : "Mostrar"}
                 >
                   {showPassword ? (
@@ -230,6 +235,6 @@ export default function Login() {
           </p>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
