@@ -204,4 +204,29 @@ router.post("/reset-password", async (req, res) => {
   }
 });
 
+// =====================================================
+//  VALIDATE-RESET-TOKEN
+// =====================================================
+router.post("/validate-reset-token", async (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) return res.status(400).json({ error: "Token requerido" });
+
+    const { data: resetData, error } = await supabase
+      .from("password_resets")
+      .select("*")
+      .eq("token", token)
+      .single();
+
+    if (error || !resetData)
+      return res.status(400).json({ error: "Token inválido" });
+    if (new Date(resetData.expires_at) < new Date())
+      return res.status(400).json({ error: "Token expirado" });
+
+    return res.json({ success: true });
+  } catch (err) {
+    return res.status(500).json({ error: "Error del servidor" });
+  }
+});
+
 module.exports = router;

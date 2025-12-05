@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function ResetPassword() {
@@ -16,9 +16,20 @@ export default function ResetPassword() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // 1️⃣ Validar token al cargar la página
+  //  Validar token al cargar la página
   useEffect(() => {
+    setError("");
+    setSuccess("");
+    setLoading(true);
+    setTokenValid(false);
+
     const validateToken = async () => {
+      if (!token) {
+        setError("expired");
+        setLoading(false);
+        return;
+      }
+
       try {
         const res = await fetch(
           "http://localhost:4000/api/auth/validate-reset-token",
@@ -32,7 +43,6 @@ export default function ResetPassword() {
         const data = await res.json();
 
         if (!res.ok) throw new Error(data.error || "Token inválido.");
-
         setTokenValid(true);
       } catch (err) {
         setTokenValid(false);
@@ -42,7 +52,7 @@ export default function ResetPassword() {
       }
     };
 
-    if (token) validateToken();
+    validateToken();
   }, [token]);
 
   // 2️⃣ Enviar nueva contraseña
@@ -65,7 +75,7 @@ export default function ResetPassword() {
       const res = await fetch("http://localhost:4000/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, newPassword: password }),
+        body: JSON.stringify({ token, new_password: password }),
       });
 
       const data = await res.json();
@@ -141,6 +151,7 @@ export default function ResetPassword() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+
             <p className="text-xs text-gray-500 mt-1">
               Usa al menos 8 caracteres, combinando letras y números.
             </p>
