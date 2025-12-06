@@ -6,6 +6,7 @@ export default function ResetPassword() {
   const [params] = useSearchParams();
 
   const token = params.get("token");
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -72,7 +73,7 @@ export default function ResetPassword() {
     }
 
     try {
-      const res = await fetch("http://localhost:4000/api/auth/reset-password", {
+      const res = await fetch(`${API_URL}/api/auth/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, new_password: password }),
