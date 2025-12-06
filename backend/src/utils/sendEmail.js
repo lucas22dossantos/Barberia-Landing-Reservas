@@ -2,7 +2,7 @@ const nodemailer = require("nodemailer");
 
 // Convertimos el puerto a número y ajustamos secure automáticamente
 const port = Number(process.env.SMTP_PORT);
-const secure = port === 465; // true si es 465, false si es 587
+const secure = port === 465; // true si es 465, false si 587
 
 // Crear el transporter
 const transporter = nodemailer.createTransport({
@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
-}));
+});
 
 // Verificar conexión (opcional, útil para depuración)
 transporter.verify((error, success) => {
@@ -28,9 +28,9 @@ async function sendEmail(to, subject, html) {
   try {
     await transporter.sendMail({
       from: `"BlackGold Barbería" <${process.env.SMTP_USER}>`,
-      to,
-      subject,
-      html,
+      to: to,
+      subject: subject,
+      html: html,
     });
     console.log(`Email enviado a ${to} con éxito ✅`);
   } catch (error) {
