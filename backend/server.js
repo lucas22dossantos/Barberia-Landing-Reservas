@@ -1,62 +1,31 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-app.use("/api/auth", authRoutes);
 
-// Crear la aplicación de Express
+// Crear app
 const app = express();
 
-// ===== MIDDLEWARES =====
+// Middlewares
 app.use(express.json());
-
-// Configuración de CORS para producción y desarrollo
-const allowedOrigins = [
-  "http://localhost:5173", // desarrollo
-  "https://barberia-rho-seven.vercel.app", // frontend en Vercel
-];
-
-// app.use(
-//   cors({
-//     origin: function (origin, callback) {
-//       // Permitir requests sin origin (ej. Postman)
-//       if (!origin) return callback(null, true);
-//       if (allowedOrigins.indexOf(origin) === -1) {
-//         const msg = "La política de CORS no permite este origen";
-//         return callback(new Error(msg), false);
-//       }
-//       return callback(null, true);
-//     },
-//     credentials: true,
-//   })
-// );
-
 app.use(cors());
 
-// ===== RUTAS =====
+// Rutas
 const authRoutes = require("./src/routes/auth");
 app.use("/api/auth", authRoutes);
 
-// Ruta de prueba
+// Ruta test
 app.get("/", (req, res) => {
-  res.json({
-    message: "🚀 API de BlackGold Barbería funcionando correctamente",
-    version: "1.0.0",
-  });
+  res.json({ message: "OK", version: "1.0.0" });
 });
 
-// ===== MANEJO DE ERRORES =====
+// Error handler
 app.use((err, req, res, next) => {
-  console.error("Error:", err.stack);
-  res.status(500).json({
-    error: err.message || "Algo salió mal en el servidor",
-  });
+  console.error("Error:", err);
+  res.status(500).json({ error: err.message });
 });
 
-// ===== INICIAR SERVIDOR =====
+// Start server
 const PORT = process.env.PORT || 4000;
-
 app.listen(PORT, () => {
-  console.log("==========================================");
-  console.log(`Servidor corriendo en el puerto ${PORT}`);
-  console.log("==========================================");
+  console.log(`Servidor en puerto ${PORT}`);
 });
