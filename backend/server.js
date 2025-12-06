@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+app.use("/api/auth", authRoutes);
 
 // Crear la aplicación de Express
 const app = express();
@@ -14,20 +15,22 @@ const allowedOrigins = [
   "https://barberia-rho-seven.vercel.app", // frontend en Vercel
 ];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // Permitir requests sin origin (ej. Postman)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg = "La política de CORS no permite este origen";
-        return callback(new Error(msg), false);
-      }
-      return callback(null, true);
-    },
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: function (origin, callback) {
+//       // Permitir requests sin origin (ej. Postman)
+//       if (!origin) return callback(null, true);
+//       if (allowedOrigins.indexOf(origin) === -1) {
+//         const msg = "La política de CORS no permite este origen";
+//         return callback(new Error(msg), false);
+//       }
+//       return callback(null, true);
+//     },
+//     credentials: true,
+//   })
+// );
+
+app.use(cors());
 
 // ===== RUTAS =====
 const authRoutes = require("./src/routes/auth");
