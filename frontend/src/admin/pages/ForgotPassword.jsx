@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import emailjs from "@emailjs/browser";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
