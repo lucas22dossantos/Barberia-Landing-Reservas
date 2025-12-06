@@ -17,16 +17,11 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      // 1. Pedir token al backend
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/forgot-password`,
-
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
-        }
-      );
+      const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
 
       const data = await res.json();
 
@@ -34,22 +29,7 @@ export default function ForgotPassword() {
         throw new Error(data.error || "No se pudo procesar la solicitud.");
       }
 
-      const token = data.token;
-
-      // 2. Generar el link real con el token
-      const resetLink = `http://localhost:5173/reset-password?token=${token}`;
-
-      // // 3. Enviar el correo con EmailJS
-      // await emailjs.send(
-      //   import.meta.env.VITE_EMAILJS_SERVICE,
-      //   import.meta.env.VITE_EMAILJS_TEMPLATE_FORGOT,
-      //   {
-      //     user_email: email,
-      //     reset_link: resetLink,
-      //   },
-      //   import.meta.env.VITE_EMAILJS_PUBLIC
-      // );
-
+      // ✅ Solo muestra éxito. El backend se encarga del correo.
       setSuccess(true);
     } catch (err) {
       setError(err.message || "Error inesperado.");
