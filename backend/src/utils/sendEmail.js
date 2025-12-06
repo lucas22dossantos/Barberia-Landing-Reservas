@@ -1,41 +1,42 @@
+// utils/sendEmail.js
 const nodemailer = require("nodemailer");
 
-// Convertimos el puerto a número y ajustamos secure automáticamente
-const port = Number(process.env.SMTP_PORT);
-const secure = port === 465; // true si es 465, false si 587
-
-// Crear el transporter
+// Crear transporter usando Gmail SMTP
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: port,
-  secure: secure,
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // true solo para puerto 465
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
+    user: process.env.GMAIL_USER, // tu correo@gmail.com
+    pass: process.env.GMAIL_APP_PASS, // la App Password de 16 caracteres
+  },
+  tls: {
+    rejectUnauthorized: false, // evita errores en algunos entornos
   },
 });
 
-// Verificar conexión (opcional, útil para depuración)
-transporter.verify((error, success) => {
-  if (error) {
-    console.error("Error verificando SMTP:", error);
-  } else {
-    console.log("SMTP listo para enviar correos ✅");
-  }
-});
-
+/**
+ * Envía un correo electrónico
+ * @param {string} to - Destinatario
+ * @param {string} subject - Asunto
+ * @param {string} html - Contenido HTML
+ */
 async function sendEmail(to, subject, html) {
+  const fromEmail = process.env.GMAIL_USER; // debe ser el mismo Gmail
+
+  const mailOptions = {
+    from: `"BlackGold Barbería" <${fromEmail}>`,
+    to,
+    subject,
+    html,
+  };
+
   try {
-    await transporter.sendMail({
-      from: `"BlackGold Barbería" <${process.env.SMTP_USER}>`,
-      to: to,
-      subject: subject,
-      html: html,
-    });
-    console.log(`Email enviado a ${to} con éxito ✅`);
-  } catch (error) {
-    console.error("Error enviando email:", error);
-    throw error;
+    await transporter.sendMail(mailOptions);
+    console.log("✅ Email enviado a:", to);
+  } catch (err) {
+    console.error("❌ Error enviando email:", err.message);
+    throw err;
   }
 }
 
