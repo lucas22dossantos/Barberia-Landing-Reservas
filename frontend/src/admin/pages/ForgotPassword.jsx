@@ -8,6 +8,8 @@ export default function ForgotPassword() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -17,7 +19,8 @@ export default function ForgotPassword() {
     try {
       // 1. Pedir token al backend
       const res = await fetch(
-        "http://localhost:4000/api/auth/forgot-password",
+        `${import.meta.env.VITE_API_URL}/api/auth/forgot-password`,
+
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
