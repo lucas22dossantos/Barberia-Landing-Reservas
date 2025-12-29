@@ -11,7 +11,9 @@ app.use(cors());
 
 // Rutas
 const authRoutes = require("./src/routes/auth");
+const reservasRoutes = require("./src/routes/reservas");
 app.use("/api/auth", authRoutes);
+app.use("/api/reservas", reservasRoutes);
 
 // Ruta test
 app.get("/", (req, res) => {

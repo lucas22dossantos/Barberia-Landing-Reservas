@@ -142,27 +142,85 @@ export default function Reservar() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const [isChecking, setIsChecking] = useState(false);
+
   // Aquí ya no usamos servicios "quemados"
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validarFormulario()) {
       return;
     }
 
-    const servicioSeleccionado = servicios.find((s) => s.id === form.servicio);
-    const barberoSeleccionado =
-      form.barbero === ""
-        ? { id: null, nombre: "Cualquiera" }
-        : barberos.find((b) => b.id === form.barbero);
+    setIsChecking(true);
+    setErrors({});
 
-    navigate("/confirmar", {
-      state: {
-        ...form,
-        barbero: barberoSeleccionado,
-        servicio: servicioSeleccionado,
-      },
-    });
+    try {
+      const barberoId = form.barbero === "" ? null : form.barbero;
+
+      // Verificar disponibilidad en Supabase
+      let query = supabase
+        .from("reservas")
+        .select("id")
+        .eq("fecha", form.fecha)
+        .eq("hora", form.hora)
+        .neq("estado", "cancelada"); // Excluir canceladas
+
+      // Si seleccionó un barbero específico, chequear solo para ese
+      if (barberoId) {
+        query = query.eq("barbero_id", barberoId);
+      }
+
+      const { data: existingReservations, error: checkError } = await query;
+
+      if (checkError) throw checkError;
+
+      // Si hay reservas existentes para ese slot
+      // (Si barberoId es null, significa que estamos viendo si ALGUIEN está ocupado. 
+      // Por simplicidad en este MVP, si no elige barbero, permitimos si hay al menos un barbero total libre.
+      // Pero como no sabemos cuántos barberos hay activos fácilmente sin otro fetch, 
+      // asumiremos que si barberoId es NULL, chequeamos si hay alguien con barbero_id NULL o si todos están ocupados.
+      // Regla de negocio: Si elige barbero, se valida ese. Si no elige, se valida que no haya una reserva 'genérica' o que el slot no esté saturado.)
+      
+      if (existingReservations && existingReservations.length > 0) {
+        // Si seleccionó barbero y ya tiene cita
+        if (barberoId) {
+          setErrors({ hora: "Este barbero ya tiene una cita a esta hora." });
+          setIsChecking(false);
+          return;
+        } 
+        // Si no seleccionó barbero but hay una reserva sin barbero asignado o saturación (lógica simple)
+        else {
+          // Si hay reservas pero no se especificó barbero, podríamos ser más permisivos 
+          // pero para evitar conflictos, diremos que el horario está ocupado si hay reservas "sin barbero"
+          const hasGenericReserva = existingReservations.some(r => r.barbero_id === null);
+          if (hasGenericReserva) {
+            setErrors({ hora: "Este horario ya no está disponible." });
+            setIsChecking(false);
+            return;
+          }
+        }
+      }
+
+      const servicioSeleccionado = servicios.find((s) => s.id === form.servicio);
+      const barberoSeleccionado =
+        form.barbero === ""
+          ? { id: null, nombre: "Cualquiera" }
+          : barberos.find((b) => b.id === form.barbero);
+
+      navigate("/confirmar", {
+        state: {
+          ...form,
+          barbero: barberoSeleccionado,
+          servicio: servicioSeleccionado,
+        },
+      });
+    } catch (err) {
+      console.error("Error checking availability:", err);
+      setErrors({ general: "Error al verificar disponibilidad. Intenta de nuevo." });
+    } finally {
+      setIsChecking(false);
+    }
   };
 
   return (
@@ -349,10 +407,13 @@ export default function Reservar() {
               <div className="flex gap-3 mt-3">
                 <button
                   type="submit"
-                  className="bg-[#bfa16a] text-[#2f2b27] px-4 py-2 rounded-lg text-sm font-semibold w-full sm:w-auto
-             hover:bg-[#a78c5c] hover:scale-105 transition-all duration-200 cursor-pointer"
+                  disabled={isChecking}
+                  className={`bg-[#bfa16a] text-[#2f2b27] px-4 py-2 rounded-lg text-sm font-semibold w-full sm:w-auto
+             hover:bg-[#a78c5c] hover:scale-105 transition-all duration-200 cursor-pointer ${
+               isChecking ? "opacity-50 cursor-not-allowed" : ""
+             }`}
                 >
-                  Continuar
+                  {isChecking ? "Verificando..." : "Continuar"}
                 </button>
 
                 <a

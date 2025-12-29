@@ -46,7 +46,7 @@ export default function BookingConfirm() {
     const correo = data.email ?? null;
 
     try {
-      // Insertar en la tabla 'reservas' (la que tenés creada)
+      // Insertar en la tabla 'reservas'
       const { error } = await supabase.from("reservas").insert([
         {
           nombre: data.nombre,
@@ -58,7 +58,6 @@ export default function BookingConfirm() {
           hora: data.hora,
           notas: data.notas || null,
           estado: "pendiente",
-          /* created_at se rellena con default now() en la BD */
         },
       ]);
 
@@ -67,6 +66,27 @@ export default function BookingConfirm() {
         setModalType("error");
         setIsModalOpen(true);
         return;
+      }
+
+      // Enviar confirmación por correo vía Backend
+      if (correo) {
+        try {
+          await fetch(`${import.meta.env.VITE_API_URL}/api/reservas/enviar-confirmacion`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: correo,
+              nombre: data.nombre,
+              servicio: data.servicio.nombre,
+              barbero: data.barbero.nombre,
+              fecha: data.fecha,
+              hora: data.hora,
+            }),
+          });
+        } catch (emailErr) {
+          console.error("Error al disparar confirmación:", emailErr);
+          // No bloqueamos el flujo si el email falla, ya que la reserva se guardó
+        }
       }
 
       // Éxito

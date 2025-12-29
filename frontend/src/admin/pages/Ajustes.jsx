@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SettingsCard from "../components/SettingsCard";
 import ToggleSwitch from "../components/ToggleSwitch";
 
+// Supabase
+import { supabase } from "../../lib/supabaseClient";
+
 export default function Ajustes() {
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState({
     // Información de la barbería
     nombre: "BlackGold Barbería",
-    telefono: "+54 600 000 000",
+    telefono: "+54 3765 000000",
     url: "https://blackgoldbarberia.com",
     correo: "contacto@blackgoldbarberia.com",
     direccion: "Calle Principal 123, Ciudad",
@@ -27,18 +31,98 @@ export default function Ajustes() {
       "Hola, te recordamos tu cita en BlackGold Barbería. Si no puedes asistir, contáctanos con antelación.",
   });
 
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const { data: config, error } = await supabase
+        .from("configuracion")
+        .select("*")
+        .eq("id", 1)
+        .single();
+
+      if (error) {
+        if (error.code !== "PGRST116") { // single() error for no rows
+          console.error("Error fetching settings:", error);
+        }
+      } else if (config) {
+        setData({
+          nombre: config.nombre_negocio || "",
+          telefono: config.telefono || "",
+          url: config.url_sitio || "",
+          correo: config.correo || "",
+          direccion: config.direccion || "",
+          diasAtencion: config.dias_atencion || "",
+          horario: config.horario || "",
+          permitirReservas: config.permitir_reservas,
+          tiempoMinimo: config.tiempo_minimo || "",
+          tiempoEntre: config.tiempo_entre || "",
+          confirmacionAutomatica: config.confirmacion_automatica,
+          recordatorioCorreo: config.recordatorio_correo,
+          mensajeAgradecimiento: config.mensaje_agradecimiento,
+          remitenteCorreo: config.remitente_correo || "",
+          textoRecordatorio: config.texto_recordatorio || "",
+        });
+      }
+    } catch (err) {
+      console.error("fetchSettings exception:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleChange = (field, value) => {
     setData({ ...data, [field]: value });
   };
 
-  const handleGuardar = () => {
-    console.log("Guardando ajustes...", data);
-    // Aquí vas a conectar a tu backend o localStorage
+  const handleGuardar = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from("configuracion")
+        .upsert({
+          id: 1,
+          nombre_negocio: data.nombre,
+          telefono: data.telefono,
+          url_sitio: data.url,
+          correo: data.correo,
+          direccion: data.direccion,
+          dias_atencion: data.diasAtencion,
+          horario: data.horario,
+          permitir_reservas: data.permitirReservas,
+          tiempo_minimo: data.tiempoMinimo,
+          tiempo_entre: data.tiempoEntre,
+          confirmacion_automatica: data.confirmacionAutomatica,
+          recordatorio_correo: data.recordatorioCorreo,
+          mensaje_agradecimiento: data.mensajeAgradecimiento,
+          remitente_correo: data.remitenteCorreo,
+          texto_recordatorio: data.textoRecordatorio,
+          updated_at: new Date().toISOString(),
+        });
+
+      if (error) throw error;
+      alert("Ajustes guardados correctamente");
+    } catch (error) {
+      console.error("Error guardando ajustes:", error);
+      alert("Error al guardar los ajustes. Asegúrate de que la tabla 'configuracion' existe.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleReset = () => {
-    window.location.reload();
+    fetchSettings();
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen text-white">
+        Cargando ajustes...
+      </div>
+    );
+  }
 
   return (
     <div className="text-gray-200 p-8 flex flex-col gap-8">

@@ -1,77 +1,107 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "../../lib/supabaseClient";
 
 export default function Citas() {
-  const [citas, setCitas] = useState([
-    {
-      id: 1,
-      fecha: "2025-12-01",
-      hora: "10:00",
-      cliente: "Juan Pérez",
-      servicio: "Corte clásico",
-      barbero: "Carlos",
-      estado: "Completada",
-    },
-    {
-      id: 2,
-      fecha: "2025-12-01",
-      hora: "11:00",
-      cliente: "Luis Gómez",
-      servicio: "Corte + Barba",
-      barbero: "Diego",
-      estado: "Pendiente",
-    },
-    {
-      id: 3,
-      fecha: "2025-12-02",
-      hora: "12:30",
-      cliente: "Marcos Díaz",
-      servicio: "Corte degradado",
-      barbero: "Carlos",
-      estado: "Pendiente",
-    },
-    {
-      id: 4,
-      fecha: "2025-12-03",
-      hora: "16:00",
-      cliente: "Miguel Torres",
-      servicio: "Afeitado clásico",
-      barbero: "Cualquier",
-      estado: "Pendiente",
-    },
-    {
-      id: 5,
-      fecha: "2025-12-03",
-      hora: "17:30",
-      cliente: "David Ruiz",
-      servicio: "Arreglo de barba",
-      barbero: "Diego",
-      estado: "Cancelada",
-    },
-  ]);
-
+  const [citas, setCitas] = useState([]);
+  const [barberos, setBarberos] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [modalEditar, setModalEditar] = useState(null);
 
-  const cambiarEstado = (id, nuevoEstado) => {
-    setCitas((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, estado: nuevoEstado } : c))
-    );
+  // Filtros
+  const [filtroEstado, setFiltroEstado] = useState("");
+  const [filtroBarbero, setFiltroBarbero] = useState("");
+  const [busqueda, setBusqueda] = useState("");
+  const [filtroFecha, setFiltroFecha] = useState("");
+
+  useEffect(() => {
+    fetchInitialData();
+  }, []);
+
+  useEffect(() => {
+    fetchCitas();
+  }, [filtroEstado, filtroBarbero, filtroFecha]);
+
+  const fetchInitialData = async () => {
+    const { data: barberosData } = await supabase.from("barberos").select("*");
+    setBarberos(barberosData || []);
   };
 
-  const eliminarCita = (id) => {
+  const fetchCitas = async () => {
+    setLoading(true);
+    try {
+      let query = supabase
+        .from("reservas")
+        .select(`
+          *,
+          servicios(nombre),
+          barberos(nombre)
+        `)
+        .order("fecha", { ascending: false })
+        .order("hora", { ascending: false });
+
+      if (filtroEstado) query = query.eq("estado", filtroEstado.toLowerCase());
+      if (filtroBarbero) query = query.eq("barbero_id", filtroBarbero);
+      if (filtroFecha) query = query.eq("fecha", filtroFecha);
+
+      const { data, error } = await query;
+      if (error) throw error;
+      setCitas(data || []);
+    } catch (error) {
+      console.error("Error fetching citas:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const cambiarEstado = async (id, nuevoEstado) => {
+    try {
+      const { error } = await supabase
+        .from("reservas")
+        .update({ estado: nuevoEstado.toLowerCase() })
+        .eq("id", id);
+      
+      if (error) throw error;
+      fetchCitas();
+    } catch (error) {
+      alert("Error al actualizar el estado");
+    }
+  };
+
+  const eliminarCita = async (id) => {
     if (confirm("¿Seguro que deseas eliminar esta cita?")) {
-      setCitas((prev) => prev.filter((c) => c.id !== id));
+      try {
+        const { error } = await supabase.from("reservas").delete().eq("id", id);
+        if (error) throw error;
+        fetchCitas();
+      } catch (error) {
+        alert("Error al eliminar la cita");
+      }
     }
   };
 
   const abrirEditar = (cita) => {
-    setModalEditar(cita);
+    setModalEditar({
+      ...cita,
+      cliente: cita.nombre, // mapeamos nombre a cliente para el modal
+    });
   };
 
-  const guardarEdicion = () => {
-    setCitas((prev) =>
-      prev.map((c) => (c.id === modalEditar.id ? modalEditar : c))
-    );
-    setModalEditar(null);
+  const guardarEdicion = async () => {
+    try {
+      const { error } = await supabase
+        .from("reservas")
+        .update({
+          nombre: modalEditar.cliente,
+          estado: modalEditar.estado.toLowerCase(),
+        })
+        .eq("id", modalEditar.id);
+
+      if (error) throw error;
+      setModalEditar(null);
+      fetchCitas();
+    } catch (error) {
+      alert("Error al guardar cambios");
+    }
   };
 
   const hoy = new Date().toISOString().split("T")[0];
@@ -81,22 +111,17 @@ export default function Citas() {
   };
 
   const getEstadoColor = (estado) => {
-    switch (estado) {
-      case "Completada":
+    switch (estado?.toLowerCase()) {
+      case "completada":
         return "bg-green-800 text-green-300";
-      case "Pendiente":
+      case "pendiente":
         return "bg-yellow-800 text-yellow-300";
-      case "Cancelada":
+      case "cancelada":
         return "bg-red-800 text-red-300";
       default:
         return "bg-gray-700 text-gray-300";
     }
   };
-
-  const [filtroEstado, setFiltroEstado] = useState("");
-  const [filtroBarbero, setFiltroBarbero] = useState("");
-  const [busqueda, setBusqueda] = useState("");
-  const [filtroFecha, setFiltroFecha] = useState("");
 
   const resetFiltros = () => {
     setFiltroEstado("");
@@ -106,14 +131,9 @@ export default function Citas() {
   };
 
   const citasFiltradas = citas.filter((c) => {
-    return (
-      (filtroEstado ? c.estado === filtroEstado : true) &&
-      (filtroBarbero ? c.barbero === filtroBarbero : true) &&
-      (busqueda
-        ? c.cliente.toLowerCase().includes(busqueda.toLowerCase())
-        : true) &&
-      (filtroFecha ? c.fecha === filtroFecha : true)
-    );
+    return busqueda
+      ? c.nombre.toLowerCase().includes(busqueda.toLowerCase())
+      : true;
   });
 
   return (
@@ -158,9 +178,9 @@ export default function Citas() {
           onChange={(e) => setFiltroBarbero(e.target.value)}
         >
           <option value="">Barbero: Todos</option>
-          <option value="Carlos">Carlos</option>
-          <option value="Diego">Diego</option>
-          <option value="Cualquier">Cualquier</option>
+          {barberos.map((b) => (
+            <option key={b.id} value={b.id}>{b.nombre}</option>
+          ))}
         </select>
 
         {/* Búsqueda */}
@@ -181,8 +201,8 @@ export default function Citas() {
         </button>
       </div>
 
-      <div className="bg-[#1c1a18] p-6 rounded-xl shadow-xl border border-[#2b2724]">
-        <table className="w-full border-separate border-spacing-y-2">
+      <div className="bg-[#1c1a18] p-6 rounded-xl shadow-xl border border-[#2b2724] overflow-x-auto">
+        <table className="w-full border-separate border-spacing-y-2 min-w-[800px]">
           <thead>
             <tr className="text-gray-400 text-sm">
               <th className="py-2">Fecha</th>
@@ -196,101 +216,69 @@ export default function Citas() {
           </thead>
 
           <tbody>
-            {citasFiltradas.map((cita) => (
-              <tr
-                key={cita.id}
-                className="
-                  bg-[#252220] 
-                  hover:bg-[#2f2b27] 
-                  transition-all
-                  rounded-lg
-                "
-              >
-                <td className="py-4 px-3 rounded-l-lg font-medium">
-                  {cita.fecha}
-                </td>
+            {loading ? (
+               <tr><td colSpan="7" className="py-8 text-center text-gray-500">Cargando citas...</td></tr>
+            ) : citasFiltradas.length === 0 ? (
+              <tr><td colSpan="7" className="py-8 text-center text-gray-500">No se encontraron citas</td></tr>
+            ) : (
+              citasFiltradas.map((cita) => (
+                <tr
+                  key={cita.id}
+                  className="bg-[#252220] hover:bg-[#2f2b27] transition-all rounded-lg"
+                >
+                  <td className="py-4 px-3 rounded-l-lg font-medium">{cita.fecha}</td>
+                  <td className="py-4 px-3 font-medium">{cita.hora}</td>
+                  <td className="px-3">{cita.nombre}</td>
+                  <td className="px-3 text-gray-300">{cita.servicios?.nombre || "—"}</td>
+                  <td className="px-3">{cita.barberos?.nombre || "Cualquiera"}</td>
+                  <td className="px-3">
+                    <span className={`px-3 py-1 text-xs rounded-lg font-semibold capitalize ${getEstadoColor(cita.estado)}`}>
+                      {cita.estado}
+                    </span>
+                  </td>
 
-                <td className="py-4 px-3 rounded-l-lg font-medium">
-                  {cita.hora}
-                </td>
+                  {/* ACCIONES */}
+                  <td className="px-3 rounded-r-lg">
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => abrirEditar(cita)}
+                        className="px-2 py-1 text-sm rounded-md bg-blue-900/40 text-blue-300 hover:bg-blue-900/60 transition"
+                      >
+                        Editar
+                      </button>
 
-                <td className="px-3">{cita.cliente}</td>
+                      <button
+                        onClick={() => cambiarEstado(cita.id, "Completada")}
+                        className="px-2 py-1 text-sm rounded-md bg-green-900/40 text-green-300 hover:bg-green-900/60 transition"
+                      >
+                        Completar
+                      </button>
 
-                <td className="px-3 text-gray-300">{cita.servicio}</td>
+                      <button
+                        onClick={() => cambiarEstado(cita.id, "Cancelada")}
+                        className="px-2 py-1 text-sm rounded-md bg-red-900/40 text-red-300 hover:bg-red-900/60 transition"
+                      >
+                        Cancelar
+                      </button>
 
-                <td className="px-3">{cita.barbero}</td>
-
-                <td className="px-3">
-                  <span
-                    className={`px-3 py-1 text-xs rounded-lg font-semibold ${getEstadoColor(
-                      cita.estado
-                    )}`}
-                  >
-                    {cita.estado}
-                  </span>
-                </td>
-
-                {/* ACCIONES */}
-                <td className="px-3 rounded-r-lg">
-                  <div className="flex justify-end gap-2">
-                    <button
-                      onClick={() => abrirEditar(cita)}
-                      className="
-                        px-2 py-1 text-sm rounded-md
-                        bg-blue-900/40 text-blue-300
-                        hover:bg-blue-900/60
-                        transition
-                      "
-                    >
-                      Editar
-                    </button>
-
-                    <button
-                      onClick={() => cambiarEstado(cita.id, "Completada")}
-                      className="
-                        px-2 py-1 text-sm rounded-md
-                        bg-green-900/40 text-green-300
-                        hover:bg-green-900/60
-                        transition
-                      "
-                    >
-                      Completar
-                    </button>
-
-                    <button
-                      onClick={() => cambiarEstado(cita.id, "Cancelada")}
-                      className="
-                        px-2 py-1 text-sm rounded-md
-                        bg-red-900/40 text-red-300
-                        hover:bg-red-900/60
-                        transition
-                      "
-                    >
-                      Cancelar
-                    </button>
-
-                    <button
-                      onClick={() => eliminarCita(cita.id)}
-                      className="
-                        px-2 py-1 text-sm rounded-md
-                        bg-gray-700/40 text-gray-300
-                        hover:bg-gray-700/60
-                        transition
-                      "
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                      <button
+                        onClick={() => eliminarCita(cita.id)}
+                        className="px-2 py-1 text-sm rounded-md bg-gray-700/40 text-gray-300 hover:bg-gray-700/60 transition"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
 
       {/* MODAL EDITAR */}
       {modalEditar && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-[#1c1a18] p-6 rounded-xl w-[400px] border border-[#2b2724] shadow-lg">
             <h2 className="text-xl mb-5 font-semibold">Editar cita</h2>
 
@@ -301,7 +289,7 @@ export default function Citas() {
               onChange={(e) =>
                 setModalEditar({ ...modalEditar, cliente: e.target.value })
               }
-              className="w-full bg-[#2b2724] p-2 rounded mb-4"
+              className="w-full bg-[#2b2724] p-2 rounded mb-4 text-white focus:outline-none focus:ring-1 focus:ring-[#bfa16a]"
             />
 
             <label className="text-sm text-gray-400">Estado</label>
@@ -310,24 +298,24 @@ export default function Citas() {
               onChange={(e) =>
                 setModalEditar({ ...modalEditar, estado: e.target.value })
               }
-              className="w-full bg-[#2b2724] p-2 rounded mb-4"
+              className="w-full bg-[#2b2724] p-2 rounded mb-4 text-white focus:outline-none focus:ring-1 focus:ring-[#bfa16a] capitalize"
             >
-              <option>Pendiente</option>
-              <option>Completada</option>
-              <option>Cancelada</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="completada">Completada</option>
+              <option value="cancelada">Cancelada</option>
             </select>
 
             <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={() => setModalEditar(null)}
-                className="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600"
+                className="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600 transition"
               >
                 Cancelar
               </button>
 
               <button
                 onClick={guardarEdicion}
-                className="px-4 py-2 rounded bg-[#bfa16a] text-black hover:bg-[#d6b87a]"
+                className="px-4 py-2 rounded bg-[#bfa16a] text-black hover:bg-[#d6b87a] transition font-semibold"
               >
                 Guardar cambios
               </button>
